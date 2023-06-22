@@ -1,0 +1,29 @@
+﻿name: JB InspectCode
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  analyze:
+    name: JB InspectCode
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "7.0.x"
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: Report results to Codacy
+        run: |
+          dotnet jb inspectcode WarmCorners.sln --output=jb-inspectcode-report.xml --format=xml --build -a
+          grep -q "<Issues />" jb-inspectcode-report.xml || exit 1
