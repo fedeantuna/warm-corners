@@ -27,7 +27,7 @@ public class KeyCombinationTriggerService : IKeyCombinationTriggerService
 
             if (!shouldTriggerCommand || !keyCombination.KeyCodes.Any())
                 return;
-            
+
             keyCombination.KeyCodes.ToList().ForEach(key => this._eventSimulatorWrapper.SimulateKeyPress(key));
             keyCombination.KeyCodes.ToList().ForEach(key => this._eventSimulatorWrapper.SimulateKeyRelease(key));
 

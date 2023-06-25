@@ -12,8 +12,8 @@ namespace WarmCorners.Core.Tests.Unit.Services;
 
 public class KeyCombinationTriggerServiceTests
 {
-    private readonly IKeyCombinationTriggerService _keyCombinationTriggerService;
     private readonly Mock<IEventSimulatorWrapper> _eventSimulatorWrapperMock;
+    private readonly IKeyCombinationTriggerService _keyCombinationTriggerService;
     private readonly Mock<IScreenService> _screenServiceMock;
 
     public KeyCombinationTriggerServiceTests()
@@ -84,7 +84,7 @@ public class KeyCombinationTriggerServiceTests
             KeyCode.VcLeftShift,
             KeyCode.VcBackquote
         };
-        
+
         const int bottomRightCornerX = 768;
         const int bottomRightCornerY = 1024;
         var keyCombinationTriggers = new List<KeyCombinationTrigger>
@@ -105,7 +105,7 @@ public class KeyCombinationTriggerServiceTests
                 KeyCodes = bottomLeftKeys
             }
         };
-        
+
         this._screenServiceMock
             .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopRight, bottomRightCornerX, bottomRightCornerY))
             .Returns(false);
@@ -115,10 +115,10 @@ public class KeyCombinationTriggerServiceTests
         this._screenServiceMock
             .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.BottomLeft, bottomRightCornerX, bottomRightCornerY))
             .Returns(false);
-        
+
         // Act
         this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, bottomRightCornerX, bottomRightCornerY);
-        
+
         // Assert
         this._eventSimulatorWrapperMock.Verify(esw =>
                 esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
