@@ -66,26 +66,26 @@ public class CommandTriggerServiceTests
     {
         // Arrange
         const string command = "run some-program 1";
-        const int topLeftCornerX = 0;
-        const int topLeftCornerY = 0;
+        const int topRightCornerX = 768;
+        const int topRightCornerY = 0;
         var commandTriggers = new List<CommandTrigger>
         {
             new()
             {
-                ScreenCorner = ScreenCorner.TopLeft,
+                ScreenCorner = ScreenCorner.TopRight,
                 Command = command
             }
         };
 
         this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopLeft, topLeftCornerX, topLeftCornerY))
+            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopRight, topRightCornerX, topRightCornerY))
             .Returns(true);
         this._processWrapperMock
             .Setup(pw => pw.Start("cmd", $"/c {command}"))
             .Returns(false);
 
         // Act
-        this._commandTriggerService.ProcessCommandTrigger(commandTriggers, topLeftCornerX, topLeftCornerY);
+        this._commandTriggerService.ProcessCommandTrigger(commandTriggers, topRightCornerX, topRightCornerY);
 
         // Assert
         InMemorySink.Instance
@@ -99,36 +99,36 @@ public class CommandTriggerServiceTests
     public void ProcessCommandTrigger_ExecutesCommandsWhenMouseCursorIsInCorrectCorner()
     {
         // Arrange
-        const string topLeftCornerCommand = "run some-program 1";
-        const string topRightCornerCommand = "run some-program 2";
-        const int topRightCornerX = 760;
-        const int topRightCornerY = 0;
+        const string bottomRightCornerCommand = "run some-program 1";
+        const string bottomLeftCornerCommand = "run some-program 2";
+        const int bottomLeftCornerX = 0;
+        const int bottomLeftCornerY = 1024;
         var commandTriggers = new List<CommandTrigger>
         {
             new()
             {
-                ScreenCorner = ScreenCorner.TopLeft,
-                Command = topLeftCornerCommand
+                ScreenCorner = ScreenCorner.BottomRight,
+                Command = bottomRightCornerCommand
             },
             new()
             {
-                ScreenCorner = ScreenCorner.TopRight,
-                Command = topRightCornerCommand
+                ScreenCorner = ScreenCorner.BottomLeft,
+                Command = bottomLeftCornerCommand
             }
         };
 
         this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopLeft, topRightCornerX, topRightCornerY))
+            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.BottomRight, bottomLeftCornerX, bottomLeftCornerY))
             .Returns(false);
         this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopRight, topRightCornerX, topRightCornerY))
+            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.BottomLeft, bottomLeftCornerX, bottomLeftCornerY))
             .Returns(true);
 
         // Act
-        this._commandTriggerService.ProcessCommandTrigger(commandTriggers, topRightCornerX, topRightCornerY);
+        this._commandTriggerService.ProcessCommandTrigger(commandTriggers, bottomLeftCornerX, bottomLeftCornerY);
 
         // Assert
-        this._processWrapperMock.Verify(pw => pw.Start("cmd", $"/c {topLeftCornerCommand}"), Times.Never);
-        this._processWrapperMock.Verify(pw => pw.Start("cmd", $"/c {topRightCornerCommand}"), Times.Once);
+        this._processWrapperMock.Verify(pw => pw.Start("cmd", $"/c {bottomRightCornerCommand}"), Times.Never);
+        this._processWrapperMock.Verify(pw => pw.Start("cmd", $"/c {bottomLeftCornerCommand}"), Times.Once);
     }
 }

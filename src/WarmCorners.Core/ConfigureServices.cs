@@ -7,12 +7,10 @@ namespace WarmCorners.Core;
 
 public static class ConfigureServices
 {
-    public static IServiceCollection AddCoreServices(this IServiceCollection services)
+    public static void AddCoreServices(this IServiceCollection services)
     {
         services.AddSingleton<ICommandTriggerService, CommandTriggerService>();
 
         services.AddSingleton<IProcessWrapper, ProcessWrapper>();
-
-        return services;
     }
 }
