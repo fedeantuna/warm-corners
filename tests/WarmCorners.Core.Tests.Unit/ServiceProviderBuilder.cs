@@ -27,6 +27,11 @@ public class ServiceProviderBuilder
 
     private void ReplaceWrappersWithMocks()
     {
+        var eventSimulatorWrapper = this._services.Single(sd => sd.ServiceType == typeof(IEventSimulatorWrapper));
+        this._services.Remove(eventSimulatorWrapper);
+        var eventSimulatorWrapperMock = new Mock<IEventSimulatorWrapper>();
+        this._services.AddSingleton(_ => eventSimulatorWrapperMock.Object);
+
         var processWrapper = this._services.Single(sd => sd.ServiceType == typeof(IProcessWrapper));
         this._services.Remove(processWrapper);
         var processWrapperMock = new Mock<IProcessWrapper>();
