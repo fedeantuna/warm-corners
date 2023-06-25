@@ -19,10 +19,10 @@ public class CommandTriggerServiceTests
     {
         var provider = new ServiceProviderBuilder().Build();
 
-        var screenService = provider.GetRequiredService<IScreenService>();
-        this._screenServiceMock = Mock.Get(screenService);
         var processWrapper = provider.GetRequiredService<IProcessWrapper>();
         this._processWrapperMock = Mock.Get(processWrapper);
+        var screenService = provider.GetRequiredService<IScreenService>();
+        this._screenServiceMock = Mock.Get(screenService);
 
         this._commandTriggerService = provider.GetRequiredService<ICommandTriggerService>();
     }
@@ -43,11 +43,11 @@ public class CommandTriggerServiceTests
             }
         };
 
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopLeft, topLeftCornerX, topLeftCornerY))
-            .Returns(true);
         this._processWrapperMock
             .Setup(pw => pw.Start("cmd", $"/c {command}"))
+            .Returns(true);
+        this._screenServiceMock
+            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopLeft, topLeftCornerX, topLeftCornerY))
             .Returns(true);
 
         // Act
@@ -77,12 +77,12 @@ public class CommandTriggerServiceTests
             }
         };
 
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopRight, topRightCornerX, topRightCornerY))
-            .Returns(true);
         this._processWrapperMock
             .Setup(pw => pw.Start("cmd", $"/c {command}"))
             .Returns(false);
+        this._screenServiceMock
+            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopRight, topRightCornerX, topRightCornerY))
+            .Returns(true);
 
         // Act
         this._commandTriggerService.ProcessCommandTrigger(commandTriggers, topRightCornerX, topRightCornerY);
