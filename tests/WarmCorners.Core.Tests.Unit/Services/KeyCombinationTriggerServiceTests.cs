@@ -62,7 +62,7 @@ public class KeyCombinationTriggerServiceTests
             .WithLevel(LogEventLevel.Information)
             .WithProperty("KeyCombination").WithValue(string.Join('+', keyCodes.Select(k => k.ToString())));
     }
-    
+
     [Fact]
     public void ProcessKeyCombinationTrigger_DoesNothingWhenTheKeyCodeListIsEmpty()
     {

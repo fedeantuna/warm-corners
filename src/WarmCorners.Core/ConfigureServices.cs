@@ -21,5 +21,6 @@ public static class ConfigureServices
     {
         services.AddSingleton<IEventSimulatorWrapper, EventSimulatorWrapper>();
         services.AddSingleton<IProcessWrapper, ProcessWrapper>();
+        services.AddSingleton<ISchedulerWrapper, SchedulerWrapper>();
     }
 }

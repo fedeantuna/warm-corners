@@ -3,9 +3,9 @@ using WarmCorners.Service;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging((context, builder) => builder.AddLogging(context.HostingEnvironment))
-    .ConfigureServices(services => services.AddCoreServices()
+    .ConfigureServices((context, services) => services.AddCoreServices()
         .AddInfrastructureServices()
-        .AddPresentationServices())
+        .AddPresentationServices(context.Configuration))
     .Build();
 
-host.Run();
+await host.RunAsync();
