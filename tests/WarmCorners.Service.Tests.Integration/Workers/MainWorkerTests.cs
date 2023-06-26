@@ -1,5 +1,6 @@
 using System.Reactive.Concurrency;
 using Moq;
+using NUnit.Framework.Internal;
 using SharpHook;
 using SharpHook.Native;
 using WarmCorners.Core.Wrappers;
@@ -13,48 +14,32 @@ public class MainWorkerTests
     public void StartsListeningHooks()
     {
         // Arrange
-        var simpleReactiveGlobalHookWrapper = Testing.GetService<ISimpleReactiveGlobalHookWrapper>();
-        var simpleReactiveGlobalHookWrapperMock = Mock.Get(simpleReactiveGlobalHookWrapper);
+        var simpleReactiveGlobalHookWrapperMock = Testing.GetRequiredServiceMock<ISimpleReactiveGlobalHookWrapper>();
 
         // Act
 
         // Assert
-        simpleReactiveGlobalHookWrapperMock.Verify(rgh => rgh.RunAsync(), Times.Once);
+        simpleReactiveGlobalHookWrapperMock.Verify(rgh =>
+            rgh.RunAsync(), Times.Once);
     }
 
     [Test]
-    public void SimulatesCommandWhenUserMovesMouseOverCorner()
+    public void ExecutesCommandWhenUserMovesMouseOverCorner()
     {
         // Arrange
-        var processWrapper = Testing.GetService<IProcessWrapper>();
-        var processWrapperMock = Mock.Get(processWrapper);
-
-        const string expectedCommand = "/c notepad";
+        const string expectedCommand = "notepad";
 
         // Act
-        Testing.TestScheduler.Schedule(() => Testing.TestMouseMovedSubject.OnNext(new MouseHookEventArgs(new UioHookEvent
-        {
-            Mouse = new MouseEventData
-            {
-                X = 1024,
-                Y = 0
-            }
-        })));
-        Testing.TestScheduler.Start();
+        Testing.TriggerMouseEvent(Testing.TopRightCorner.X, Testing.TopRightCorner.Y);
 
         // Assert
-        processWrapperMock.Verify(pw =>
-                pw.Start("cmd", expectedCommand),
-            Times.Once);
+        VerifyCommandIsExecutedOnce(expectedCommand);
     }
 
     [Test]
-    public void SimulatesKeyCombinationWhenUserMovesMouseOverCorner()
+    public void ExecutesKeyCombinationWhenUserMovesMouseOverCorner()
     {
         // Arrange
-        var eventSimulatorWrapper = Testing.GetService<IEventSimulatorWrapper>();
-        var eventSimulatorWrapperMock = Mock.Get(eventSimulatorWrapper);
-
         var expectedKeyCodes = new List<KeyCode>
         {
             KeyCode.VcLeftMeta,
@@ -62,22 +47,27 @@ public class MainWorkerTests
         };
 
         // Act
-        Testing.TestScheduler.Schedule(() => Testing.TestMouseMovedSubject.OnNext(new MouseHookEventArgs(new UioHookEvent
-        {
-            Mouse = new MouseEventData
-            {
-                X = 0,
-                Y = 0
-            }
-        })));
-        Testing.TestScheduler.Start();
+        Testing.TriggerMouseEvent(Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
 
         // Assert
+        VerifyKeyCombinationIsExecutedOnce(expectedKeyCodes);
+    }
+
+    private static void VerifyCommandIsExecutedOnce(string command)
+    {
+        var processWrapperMock = Testing.GetRequiredServiceMock<IProcessWrapper>();
+        processWrapperMock.Verify(pw =>
+            pw.Start("cmd", $"/c {command}"), Times.Once);
+    }
+
+    private static void VerifyKeyCombinationIsExecutedOnce(IEnumerable<KeyCode> expectedKeyCodes)
+    {
+        var eventSimulatorWrapperMock = Testing.GetRequiredServiceMock<IEventSimulatorWrapper>();
         eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyPress(It.Is<KeyCode>(kc => expectedKeyCodes.Contains(kc))),
-            Times.Exactly(2));
+                esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
+                    expectedKeyCodes.Contains(kc))), Times.Exactly(2));
         eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyRelease(It.Is<KeyCode>(kc => expectedKeyCodes.Contains(kc))),
-            Times.Exactly(2));
+                esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
+                    expectedKeyCodes.Contains(kc))), Times.Exactly(2));
     }
 }

@@ -3,7 +3,10 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using WarmCorners.Core.Wrappers;
 using WarmCorners.Service.Infrastructure.Wrapper;
 using WarmCorners.Service.Wrappers;
@@ -49,4 +52,18 @@ internal class TestApplicationFactory : WebApplicationFactory<Program>
                     .Returns(Testing.TestDisplaySize);
             })
             .Configure(_ => { });
+}
+
+public static class ServiceCollectionExtensions
+{
+    public static Mock<TIService> ReplaceServiceWithMock<TIService>(this IServiceCollection services)
+        where TIService : class
+    {
+        var service = services.Single(sd => sd.ServiceType == typeof(TIService));
+        services.Remove(service);
+        var replace = new Mock<TIService>();
+        services.AddSingleton(_ => replace.Object);
+
+        return replace;
+    }
 }

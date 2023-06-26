@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using SharpHook.Native;
 using WarmCorners.Core.Common;
+using WarmCorners.Core.Services.Abstractions;
 using WarmCorners.Service.Configurations;
 using WarmCorners.Service.Mappers;
 
@@ -12,19 +13,17 @@ public class KeyCombinationTriggerMapperTests
     public void ToKeyCombinationTriggers_MapsConfigurationToKeyCombinationTriggersIgnoringCase()
     {
         // Arrange
-        const string topLeftCornerKeyCombination = "leftMeta+tab";
-        const string topRightCornerKeyCombination = "rightControl+RIGHTAlt+deleTE";
         var keyCombinationTriggerConfigurations = new List<KeyCombinationTriggerConfiguration>
         {
             new()
             {
                 ScreenCorner = "topLEFT",
-                KeyCombination = topLeftCornerKeyCombination
+                KeyCombination = Testing.SomeKeyCombination
             },
             new()
             {
                 ScreenCorner = "topRight",
-                KeyCombination = topRightCornerKeyCombination
+                KeyCombination = Testing.SomeOtherKeyCombination
             }
         };
 
@@ -33,31 +32,25 @@ public class KeyCombinationTriggerMapperTests
 
         // Assert
         result.Should().HaveCount(keyCombinationTriggerConfigurations.Count);
-        result.Should().Contain(kct => kct.ScreenCorner == ScreenCorner.TopLeft);
-        result.Single(kct => kct.ScreenCorner == ScreenCorner.TopLeft).KeyCodes.Should()
-            .ContainInOrder(KeyCode.VcLeftMeta, KeyCode.VcTab);
-        result.Should().Contain(kct => kct.ScreenCorner == ScreenCorner.TopRight);
-        result.Single(kct => kct.ScreenCorner == ScreenCorner.TopRight).KeyCodes.Should()
-            .ContainInOrder(KeyCode.VcRightControl, KeyCode.VcRightAlt, KeyCode.VcDelete);
+        VerifyKeyCombinationOnTopLeftScreenCorner(result);
+        VerifyKeyCombinationOnTopRightScreenCorner(result);
     }
 
     [Fact]
     public void ToKeyCombinationTriggers_MapsConfigurationToKeyCombinationTriggersIgnoringInvalidScreenCorners()
     {
         // Arrange
-        const string centerCenterCornerKeyCombination = "leftMeta+tab";
-        const string topRightCornerKeyCombination = "rightControl+RIGHTAlt+deleTE";
         var keyCombinationTriggerConfigurations = new List<KeyCombinationTriggerConfiguration>
         {
             new()
             {
                 ScreenCorner = "centerCenter",
-                KeyCombination = centerCenterCornerKeyCombination
+                KeyCombination = Testing.SomeKeyCombination
             },
             new()
             {
-                ScreenCorner = "topRight",
-                KeyCombination = topRightCornerKeyCombination
+                ScreenCorner = "TopRight",
+                KeyCombination = Testing.SomeOtherKeyCombination
             }
         };
 
@@ -65,28 +58,25 @@ public class KeyCombinationTriggerMapperTests
         var result = keyCombinationTriggerConfigurations.ToKeyCombinationTriggers().ToList();
 
         // Assert
-        result.Should().ContainSingle(kct => kct.ScreenCorner == ScreenCorner.TopRight);
-        result.Single(kct => kct.ScreenCorner == ScreenCorner.TopRight).KeyCodes.Should()
-            .ContainInOrder(KeyCode.VcRightControl, KeyCode.VcRightAlt, KeyCode.VcDelete);
+        result.Should().HaveCount(1);
+        VerifyKeyCombinationOnTopRightScreenCorner(result);
     }
 
     [Fact]
     public void ToKeyCombinationTriggers_MapsConfigurationToKeyCombinationTriggersIgnoringInvalidKeyCombinations()
     {
         // Arrange
-        const string topLeftCornerKeyCombination = "leftInvalid+tab";
-        const string topRightCornerKeyCombination = "rightControl+RIGHTAlt+deleTE";
         var keyCombinationTriggerConfigurations = new List<KeyCombinationTriggerConfiguration>
         {
             new()
             {
-                ScreenCorner = "topLeft",
-                KeyCombination = topLeftCornerKeyCombination
+                ScreenCorner = "topLefT",
+                KeyCombination = Testing.SomeInvalidKeyCombination
             },
             new()
             {
-                ScreenCorner = "topRight",
-                KeyCombination = topRightCornerKeyCombination
+                ScreenCorner = "topRIGHT",
+                KeyCombination = Testing.SomeOtherKeyCombination
             }
         };
 
@@ -94,6 +84,19 @@ public class KeyCombinationTriggerMapperTests
         var result = keyCombinationTriggerConfigurations.ToKeyCombinationTriggers().ToList();
 
         // Assert
+        result.Should().HaveCount(1);
+        VerifyKeyCombinationOnTopRightScreenCorner(result);
+    }
+
+    private static void VerifyKeyCombinationOnTopLeftScreenCorner(IReadOnlyCollection<KeyCombinationTrigger> result)
+    {
+        result.Should().Contain(kct => kct.ScreenCorner == ScreenCorner.TopLeft);
+        result.Single(kct => kct.ScreenCorner == ScreenCorner.TopLeft).KeyCodes.Should()
+            .ContainInOrder(KeyCode.VcLeftMeta, KeyCode.VcTab);
+    }
+    
+    private static void VerifyKeyCombinationOnTopRightScreenCorner(IReadOnlyCollection<KeyCombinationTrigger> result)
+    {
         result.Should().ContainSingle(kct => kct.ScreenCorner == ScreenCorner.TopRight);
         result.Single(kct => kct.ScreenCorner == ScreenCorner.TopRight).KeyCodes.Should()
             .ContainInOrder(KeyCode.VcRightControl, KeyCode.VcRightAlt, KeyCode.VcDelete);

@@ -9,59 +9,20 @@ namespace WarmCorners.Service.Tests.Unit.Infrastructure.Services;
 
 public class ScreenServiceTests
 {
-    private const int ScreenWidth = 1024;
-    private const int ScreenHeight = 768;
-
     private readonly IScreenService _screenResolutionProvider;
 
     public ScreenServiceTests()
     {
         var provider = new ServiceProviderBuilder().Build();
 
-        var user32Wrapper = provider.GetRequiredService<IUser32Wrapper>();
-        var user32WrapperMock = Mock.Get(user32Wrapper);
-        user32WrapperMock.Setup(u32W => u32W.GetScreenResolution()).Returns((ScreenWidth, ScreenHeight));
-
         this._screenResolutionProvider = provider.GetRequiredService<IScreenService>();
     }
 
     [Theory]
-    [InlineData(ScreenCorner.TopLeft, -1, -1, true)]
-    [InlineData(ScreenCorner.TopLeft, -1, 0, true)]
-    [InlineData(ScreenCorner.TopLeft, -1, 1, false)]
-    [InlineData(ScreenCorner.TopLeft, 0, -1, true)]
-    [InlineData(ScreenCorner.TopLeft, 0, 0, true)]
-    [InlineData(ScreenCorner.TopLeft, 0, 1, false)]
-    [InlineData(ScreenCorner.TopLeft, 1, -1, false)]
-    [InlineData(ScreenCorner.TopLeft, 1, 0, false)]
-    [InlineData(ScreenCorner.TopLeft, 1, 1, false)]
-    [InlineData(ScreenCorner.TopRight, ScreenWidth - 1, -1, false)]
-    [InlineData(ScreenCorner.TopRight, ScreenWidth - 1, 0, false)]
-    [InlineData(ScreenCorner.TopRight, ScreenWidth - 1, 1, false)]
-    [InlineData(ScreenCorner.TopRight, ScreenWidth, -1, true)]
-    [InlineData(ScreenCorner.TopRight, ScreenWidth, 0, true)]
-    [InlineData(ScreenCorner.TopRight, ScreenWidth, 1, false)]
-    [InlineData(ScreenCorner.TopRight, ScreenWidth + 1, -1, true)]
-    [InlineData(ScreenCorner.TopRight, ScreenWidth + 1, 0, true)]
-    [InlineData(ScreenCorner.TopRight, ScreenWidth + 1, 1, false)]
-    [InlineData(ScreenCorner.BottomRight, ScreenWidth - 1, ScreenHeight - 1, false)]
-    [InlineData(ScreenCorner.BottomRight, ScreenWidth - 1, ScreenHeight, false)]
-    [InlineData(ScreenCorner.BottomRight, ScreenWidth - 1, ScreenHeight + 1, false)]
-    [InlineData(ScreenCorner.BottomRight, ScreenWidth, ScreenHeight - 1, false)]
-    [InlineData(ScreenCorner.BottomRight, ScreenWidth, ScreenHeight, true)]
-    [InlineData(ScreenCorner.BottomRight, ScreenWidth, ScreenHeight + 1, true)]
-    [InlineData(ScreenCorner.BottomRight, ScreenWidth + 1, ScreenHeight - 1, false)]
-    [InlineData(ScreenCorner.BottomRight, ScreenWidth + 1, ScreenHeight, true)]
-    [InlineData(ScreenCorner.BottomRight, ScreenWidth + 1, ScreenHeight + 1, true)]
-    [InlineData(ScreenCorner.BottomLeft, -1, ScreenHeight - 1, false)]
-    [InlineData(ScreenCorner.BottomLeft, -1, ScreenHeight, true)]
-    [InlineData(ScreenCorner.BottomLeft, -1, ScreenHeight + 1, true)]
-    [InlineData(ScreenCorner.BottomLeft, 0, ScreenHeight - 1, false)]
-    [InlineData(ScreenCorner.BottomLeft, 0, ScreenHeight, true)]
-    [InlineData(ScreenCorner.BottomLeft, 0, ScreenHeight + 1, true)]
-    [InlineData(ScreenCorner.BottomLeft, 1, ScreenHeight - 1, false)]
-    [InlineData(ScreenCorner.BottomLeft, 1, ScreenHeight, false)]
-    [InlineData(ScreenCorner.BottomLeft, 1, ScreenHeight + 1, false)]
+    [MemberData(nameof(TopLeftCornerTestCases))]
+    [MemberData(nameof(TopRightCornerTestCases))]
+    [MemberData(nameof(BottomRightCornerTestCases))]
+    [MemberData(nameof(BottomLeftCornerTestCases))]
     public void GetsTheCurrentCornerThresholdsForTheCurrentScreenResolution(ScreenCorner screenCorner, int x, int y, bool expectedResult)
     {
         // Act
@@ -70,4 +31,60 @@ public class ScreenServiceTests
         // Assert
         result.Should().Be(expectedResult);
     }
+
+    public static readonly TheoryData<ScreenCorner, int, int, bool> TopLeftCornerTestCases = new()
+    {
+        // ScreenCorner         Mouse Cursor Position (X)    Mouse Cursor Position (Y)    Expected
+        { ScreenCorner.TopLeft, Testing.TopLeftCorner.X - 1, Testing.TopLeftCorner.Y - 1, true },
+        { ScreenCorner.TopLeft, Testing.TopLeftCorner.X - 1, Testing.TopLeftCorner.Y + 0, true },
+        { ScreenCorner.TopLeft, Testing.TopLeftCorner.X - 1, Testing.TopLeftCorner.Y + 1, false },
+        { ScreenCorner.TopLeft, Testing.TopLeftCorner.X + 0, Testing.TopLeftCorner.Y - 1, true },
+        { ScreenCorner.TopLeft, Testing.TopLeftCorner.X + 0, Testing.TopLeftCorner.Y + 0, true },
+        { ScreenCorner.TopLeft, Testing.TopLeftCorner.X + 0, Testing.TopLeftCorner.Y + 1, false },
+        { ScreenCorner.TopLeft, Testing.TopLeftCorner.X + 1, Testing.TopLeftCorner.Y - 1, false },
+        { ScreenCorner.TopLeft, Testing.TopLeftCorner.X + 1, Testing.TopLeftCorner.Y + 0, false },
+        { ScreenCorner.TopLeft, Testing.TopLeftCorner.X + 1, Testing.TopLeftCorner.Y + 1, false }
+    };
+    
+    public static readonly TheoryData<ScreenCorner, int, int, bool> TopRightCornerTestCases = new()
+    {
+        // ScreenCorner          Mouse Cursor Position (X)     Mouse Cursor Position (Y)     Expected
+        { ScreenCorner.TopRight, Testing.TopRightCorner.X - 1, Testing.TopRightCorner.Y - 1, false },
+        { ScreenCorner.TopRight, Testing.TopRightCorner.X - 1, Testing.TopRightCorner.Y + 0, false },
+        { ScreenCorner.TopRight, Testing.TopRightCorner.X - 1, Testing.TopRightCorner.Y + 1, false },
+        { ScreenCorner.TopRight, Testing.TopRightCorner.X + 0, Testing.TopRightCorner.Y - 1, true },
+        { ScreenCorner.TopRight, Testing.TopRightCorner.X + 0, Testing.TopRightCorner.Y + 0, true },
+        { ScreenCorner.TopRight, Testing.TopRightCorner.X + 0, Testing.TopRightCorner.Y + 1, false },
+        { ScreenCorner.TopRight, Testing.TopRightCorner.X + 1, Testing.TopRightCorner.Y - 1, true },
+        { ScreenCorner.TopRight, Testing.TopRightCorner.X + 1, Testing.TopRightCorner.Y + 0, true },
+        { ScreenCorner.TopRight, Testing.TopRightCorner.X + 1, Testing.TopRightCorner.Y + 1, false }
+    };
+    
+    public static readonly TheoryData<ScreenCorner, int, int, bool> BottomRightCornerTestCases = new()
+    {
+        // ScreenCorner             Mouse Cursor Position (X)        Mouse Cursor Position (Y)        Expected
+        { ScreenCorner.BottomRight, Testing.BottomRightCorner.X - 1, Testing.BottomRightCorner.Y - 1, false },
+        { ScreenCorner.BottomRight, Testing.BottomRightCorner.X - 1, Testing.BottomRightCorner.Y + 0, false },
+        { ScreenCorner.BottomRight, Testing.BottomRightCorner.X - 1, Testing.BottomRightCorner.Y + 1, false },
+        { ScreenCorner.BottomRight, Testing.BottomRightCorner.X + 0, Testing.BottomRightCorner.Y - 1, false },
+        { ScreenCorner.BottomRight, Testing.BottomRightCorner.X + 0, Testing.BottomRightCorner.Y + 0, true },
+        { ScreenCorner.BottomRight, Testing.BottomRightCorner.X + 0, Testing.BottomRightCorner.Y + 1, true },
+        { ScreenCorner.BottomRight, Testing.BottomRightCorner.X + 1, Testing.BottomRightCorner.Y - 1, false },
+        { ScreenCorner.BottomRight, Testing.BottomRightCorner.X + 1, Testing.BottomRightCorner.Y + 0, true },
+        { ScreenCorner.BottomRight, Testing.BottomRightCorner.X + 1, Testing.BottomRightCorner.Y + 1, true }
+    };
+    
+    public static readonly TheoryData<ScreenCorner, int, int, bool> BottomLeftCornerTestCases = new()
+    {
+        // ScreenCorner            Mouse Cursor Position (X)       Mouse Cursor Position (Y)       Expected
+        { ScreenCorner.BottomLeft, Testing.BottomLeftCorner.X - 1, Testing.BottomLeftCorner.Y - 1, false },
+        { ScreenCorner.BottomLeft, Testing.BottomLeftCorner.X - 1, Testing.BottomLeftCorner.Y + 0, true },
+        { ScreenCorner.BottomLeft, Testing.BottomLeftCorner.X - 1, Testing.BottomLeftCorner.Y + 1, true },
+        { ScreenCorner.BottomLeft, Testing.BottomLeftCorner.X + 0, Testing.BottomLeftCorner.Y - 1, false },
+        { ScreenCorner.BottomLeft, Testing.BottomLeftCorner.X + 0, Testing.BottomLeftCorner.Y + 0, true },
+        { ScreenCorner.BottomLeft, Testing.BottomLeftCorner.X + 0, Testing.BottomLeftCorner.Y + 1, true },
+        { ScreenCorner.BottomLeft, Testing.BottomLeftCorner.X + 1, Testing.BottomLeftCorner.Y - 1, false },
+        { ScreenCorner.BottomLeft, Testing.BottomLeftCorner.X + 1, Testing.BottomLeftCorner.Y + 0, false },
+        { ScreenCorner.BottomLeft, Testing.BottomLeftCorner.X + 1, Testing.BottomLeftCorner.Y + 1, false }
+    };
 }

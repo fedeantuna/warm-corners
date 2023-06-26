@@ -14,7 +14,6 @@ public class KeyCombinationTriggerServiceTests
 {
     private readonly Mock<IEventSimulatorWrapper> _eventSimulatorWrapperMock;
     private readonly IKeyCombinationTriggerService _keyCombinationTriggerService;
-    private readonly Mock<IScreenService> _screenServiceMock;
 
     public KeyCombinationTriggerServiceTests()
     {
@@ -22,8 +21,6 @@ public class KeyCombinationTriggerServiceTests
 
         var eventSimulatorWrapper = provider.GetRequiredService<IEventSimulatorWrapper>();
         this._eventSimulatorWrapperMock = Mock.Get(eventSimulatorWrapper);
-        var screenService = provider.GetRequiredService<IScreenService>();
-        this._screenServiceMock = Mock.Get(screenService);
 
         this._keyCombinationTriggerService = provider.GetRequiredService<IKeyCombinationTriggerService>();
     }
@@ -37,8 +34,6 @@ public class KeyCombinationTriggerServiceTests
             KeyCode.VcLeftMeta,
             KeyCode.VcTab
         };
-        const int topLeftCornerX = 0;
-        const int topLeftCornerY = 0;
         var keyCombinationTriggers = new List<KeyCombinationTrigger>
         {
             new()
@@ -47,13 +42,9 @@ public class KeyCombinationTriggerServiceTests
                 KeyCodes = keyCodes
             }
         };
-
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopLeft, topLeftCornerX, topLeftCornerY))
-            .Returns(true);
-
+        
         // Act
-        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, topLeftCornerX, topLeftCornerY);
+        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
 
         // Assert
         InMemorySink.Instance
@@ -67,95 +58,84 @@ public class KeyCombinationTriggerServiceTests
     public void ProcessKeyCombinationTrigger_DoesNothingWhenTheKeyCodeListIsEmpty()
     {
         // Arrange
-        var topRightCornerKeys = new List<KeyCode>();
-
-        const int bottomRightCornerX = 768;
-        const int bottomRightCornerY = 1024;
         var keyCombinationTriggers = new List<KeyCombinationTrigger>
         {
             new()
             {
-                ScreenCorner = ScreenCorner.TopRight,
-                KeyCodes = topRightCornerKeys
+                ScreenCorner = ScreenCorner.TopLeft,
+                KeyCodes = new List<KeyCode>()
             }
         };
 
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopRight, bottomRightCornerX, bottomRightCornerY))
-            .Returns(true);
-
         // Act
-        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, bottomRightCornerX, bottomRightCornerY);
+        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
 
         // Assert
-        this._eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
-                    topRightCornerKeys.Contains(kc))),
-            Times.Never);
-        this._eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
-                    topRightCornerKeys.Contains(kc))),
-            Times.Never);
+        this.VerifyNoKeyCombinationIsExecuted();
     }
 
     [Fact]
     public void ProcessKeyCombinationTrigger_ExecutesKeyCombinationWhenMouseCursorIsInCorrectCorner()
     {
         // Arrange
-        var bottomRightKeys = new List<KeyCode>
-        {
-            KeyCode.VcLeftAlt,
-            KeyCode.VcTab
-        };
         var bottomLeftKeys = new List<KeyCode>
         {
             KeyCode.VcLeftControl,
             KeyCode.VcLeftShift,
             KeyCode.VcBackquote
         };
-
-        const int bottomLeftCornerX = 0;
-        const int bottomLeftCornerY = 1024;
+        var topLeftKeys = new List<KeyCode>
+        {
+            KeyCode.VcLeftAlt,
+            KeyCode.VcTab
+        };
         var keyCombinationTriggers = new List<KeyCombinationTrigger>
         {
             new()
             {
-                ScreenCorner = ScreenCorner.BottomRight,
-                KeyCodes = bottomRightKeys
+                ScreenCorner = ScreenCorner.BottomLeft,
+                KeyCodes = bottomLeftKeys
             },
             new()
             {
-                ScreenCorner = ScreenCorner.BottomLeft,
-                KeyCodes = bottomLeftKeys
+                ScreenCorner = ScreenCorner.TopLeft,
+                KeyCodes = topLeftKeys
             }
         };
 
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.BottomRight, bottomLeftCornerX, bottomLeftCornerY))
-            .Returns(false);
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.BottomLeft, bottomLeftCornerX, bottomLeftCornerY))
-            .Returns(true);
-
         // Act
-        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, bottomLeftCornerX, bottomLeftCornerY);
+        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
 
         // Assert
+        this.VerifyKeyCombinationIsNeverExecuted(bottomLeftKeys);
+        this.VerifyKeyCombinationIsExecuted(topLeftKeys);
+    }
+
+    private void VerifyKeyCombinationIsExecuted(IReadOnlyCollection<KeyCode> keyCodes)
+    {
         this._eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
-                    bottomRightKeys.Contains(kc))),
-            Times.Never);
+            esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
+                keyCodes.Contains(kc))), Times.Exactly(keyCodes.Count));
         this._eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
-                    bottomRightKeys.Contains(kc))),
-            Times.Never);
+            esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
+                keyCodes.Contains(kc))), Times.Exactly(keyCodes.Count));
+    }
+
+    private void VerifyKeyCombinationIsNeverExecuted(IEnumerable<KeyCode> keyCodes)
+    {
         this._eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
-                    bottomLeftKeys.Contains(kc))),
-            Times.Exactly(bottomLeftKeys.Count));
+            esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
+                keyCodes.Contains(kc))), Times.Never);
         this._eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
-                    bottomLeftKeys.Contains(kc))),
-            Times.Exactly(bottomLeftKeys.Count));
+            esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
+                keyCodes.Contains(kc))), Times.Never);
+    }
+
+    private void VerifyNoKeyCombinationIsExecuted()
+    {
+        this._eventSimulatorWrapperMock.Verify(esw =>
+            esw.SimulateKeyPress(It.IsAny<KeyCode>()), Times.Never);
+        this._eventSimulatorWrapperMock.Verify(esw =>
+            esw.SimulateKeyRelease(It.IsAny<KeyCode>()), Times.Never);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using WarmCorners.Core.Common;
+using WarmCorners.Core.Services.Abstractions;
 using WarmCorners.Service.Configurations;
 using WarmCorners.Service.Mappers;
 
@@ -11,19 +12,17 @@ public class CommandTriggerMapperTests
     public void ToCommandTriggers_MapsConfigurationToCommandTriggersIgnoringCase()
     {
         // Arrange
-        const string topLeftCornerCommand = "some command";
-        const string topRightCornerCommand = "some other command";
         var commandTriggerConfigurations = new List<CommandTriggerConfiguration>
         {
             new()
             {
                 ScreenCorner = "topLEFT",
-                Command = topLeftCornerCommand
+                Command = Testing.SomeCommand
             },
             new()
             {
                 ScreenCorner = "topRight",
-                Command = topRightCornerCommand
+                Command = Testing.SomeOtherCommand
             }
         };
 
@@ -32,27 +31,25 @@ public class CommandTriggerMapperTests
 
         // Assert
         result.Should().HaveCount(commandTriggerConfigurations.Count);
-        result.Should().Contain(ct => ct.ScreenCorner == ScreenCorner.TopLeft && ct.Command == topLeftCornerCommand);
-        result.Should().Contain(ct => ct.ScreenCorner == ScreenCorner.TopRight && ct.Command == topRightCornerCommand);
+        VerifyCommandOnTopLeftScreenCorner(result);
+        VerifyCommandOnTopRightScreenCorner(result);
     }
 
     [Fact]
     public void ToCommandTriggers_MapsConfigurationToCommandTriggersIgnoringInvalidScreenCorners()
     {
         // Arrange
-        const string centerCenterCornerCommand = "some other command";
-        const string topRightCornerCommand = "some command";
         var commandTriggerConfigurations = new List<CommandTriggerConfiguration>
         {
             new()
             {
                 ScreenCorner = "centerCenter",
-                Command = centerCenterCornerCommand
+                Command = Testing.SomeCommand
             },
             new()
             {
-                ScreenCorner = "topRight",
-                Command = topRightCornerCommand
+                ScreenCorner = "TopRIGHT",
+                Command = Testing.SomeOtherCommand
             }
         };
 
@@ -60,6 +57,15 @@ public class CommandTriggerMapperTests
         var result = commandTriggerConfigurations.ToCommandTriggers().ToList();
 
         // Assert
-        result.Should().ContainSingle(ct => ct.ScreenCorner == ScreenCorner.TopRight && ct.Command == topRightCornerCommand);
+        result.Should().HaveCount(1);
+        VerifyCommandOnTopRightScreenCorner(result);
     }
+
+    private static void VerifyCommandOnTopLeftScreenCorner(IEnumerable<CommandTrigger> result) =>
+        result.Should().ContainSingle(ct =>
+            ct.ScreenCorner == ScreenCorner.TopLeft && ct.Command == Testing.SomeCommand);
+    
+    private static void VerifyCommandOnTopRightScreenCorner(IEnumerable<CommandTrigger> result) =>
+        result.Should().ContainSingle(ct =>
+            ct.ScreenCorner == ScreenCorner.TopRight && ct.Command == Testing.SomeOtherCommand);
 }

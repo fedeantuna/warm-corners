@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Serilog;
 using Serilog.Sinks.InMemory;
+using WarmCorners.Core.Common;
 using WarmCorners.Core.Services.Abstractions;
 using WarmCorners.Core.Wrappers;
 
@@ -27,20 +28,32 @@ public class ServiceProviderBuilder
 
     private void ReplaceWrappersWithMocks()
     {
-        var eventSimulatorWrapper = this._services.Single(sd => sd.ServiceType == typeof(IEventSimulatorWrapper));
-        this._services.Remove(eventSimulatorWrapper);
-        var eventSimulatorWrapperMock = new Mock<IEventSimulatorWrapper>();
-        this._services.AddSingleton(_ => eventSimulatorWrapperMock.Object);
+        this._services.ReplaceServiceWithMock<IEventSimulatorWrapper>();
 
-        var processWrapper = this._services.Single(sd => sd.ServiceType == typeof(IProcessWrapper));
-        this._services.Remove(processWrapper);
-        var processWrapperMock = new Mock<IProcessWrapper>();
-        this._services.AddSingleton(_ => processWrapperMock.Object);
+        var processWrapperMock = this._services.ReplaceServiceWithMock<IProcessWrapper>();
+        processWrapperMock
+            .Setup(pw => pw.Start("cmd", $"/c {Testing.CommandThatRunsSuccessfully}"))
+            .Returns(true);
+        processWrapperMock
+            .Setup(pw => pw.Start("cmd", $"/c {Testing.CommandThatRunsUnsuccessfully}"))
+            .Returns(false);
     }
 
     private void AddPresentationServiceMocks()
     {
         var screenServiceMock = new Mock<IScreenService>();
+        screenServiceMock
+            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopLeft, 0, 0))
+            .Returns(true);
+        screenServiceMock
+            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.TopRight, Testing.TestDisplaySize.Width, 0))
+            .Returns(false);
+        screenServiceMock
+            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.BottomRight, Testing.TestDisplaySize.Width, Testing.TestDisplaySize.Height))
+            .Returns(false);
+        screenServiceMock
+            .Setup(ss => ss.IsMouseCursorInCorner(ScreenCorner.BottomLeft, 0, Testing.TestDisplaySize.Height))
+            .Returns(false);
         this._services.AddSingleton(_ => screenServiceMock.Object);
     }
 
@@ -55,4 +68,18 @@ public class ServiceProviderBuilder
                 .CreateLogger();
             builder.AddSerilog(logger);
         });
+}
+
+public static class ServiceCollectionExtensions
+{
+    public static Mock<TIService> ReplaceServiceWithMock<TIService>(this IServiceCollection services)
+        where TIService : class
+    {
+        var service = services.Single(sd => sd.ServiceType == typeof(TIService));
+        services.Remove(service);
+        var replace = new Mock<TIService>();
+        services.AddSingleton(_ => replace.Object);
+
+        return replace;
+    }
 }
