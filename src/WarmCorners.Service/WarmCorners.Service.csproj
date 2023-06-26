@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-WarmCorners.Service-71CDDB04-894D-4535-BBF1-4C1660BF9E89</UserSecretsId>
+        <AssemblyName>WarmCorners</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,6 +23,10 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="WarmCorners.Service.Tests.Integration" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Properties\PublishProfiles\win-x86.pubxml" />
     </ItemGroup>
 
 </Project>
