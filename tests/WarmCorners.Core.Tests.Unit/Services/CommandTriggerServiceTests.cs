@@ -36,7 +36,7 @@ public class CommandTriggerServiceTests
                 Command = Testing.CommandThatRunsSuccessfully
             }
         };
-        
+
         // Act
         this._commandTriggerService.ProcessCommandTrigger(commandTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
 
@@ -60,7 +60,7 @@ public class CommandTriggerServiceTests
                 Command = Testing.CommandThatRunsUnsuccessfully
             }
         };
-        
+
         // Act
         this._commandTriggerService.ProcessCommandTrigger(commandTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
 
@@ -89,7 +89,7 @@ public class CommandTriggerServiceTests
                 Command = Testing.CommandThatRunsUnsuccessfully
             }
         };
-        
+
         // Act
         this._commandTriggerService.ProcessCommandTrigger(commandTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
 

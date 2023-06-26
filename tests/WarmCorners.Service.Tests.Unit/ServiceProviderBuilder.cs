@@ -28,7 +28,7 @@ public class ServiceProviderBuilder
     private void ReplaceWrappersWithMocks()
     {
         this._services.ReplaceServiceWithMock<ISimpleReactiveGlobalHookWrapper>();
-        
+
         var user32WrapperMock = this._services.ReplaceServiceWithMock<IUser32Wrapper>();
         user32WrapperMock.Setup(u32W =>
             u32W.GetScreenResolution()).Returns((Testing.TestDisplaySize.Width, Testing.TestDisplaySize.Height));

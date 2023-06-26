@@ -1,7 +1,4 @@
-using System.Reactive.Concurrency;
 using Moq;
-using NUnit.Framework.Internal;
-using SharpHook;
 using SharpHook.Native;
 using WarmCorners.Core.Wrappers;
 using WarmCorners.Service.Wrappers;
@@ -64,10 +61,10 @@ public class MainWorkerTests
     {
         var eventSimulatorWrapperMock = Testing.GetRequiredServiceMock<IEventSimulatorWrapper>();
         eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
-                    expectedKeyCodes.Contains(kc))), Times.Exactly(2));
+            esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
+                expectedKeyCodes.Contains(kc))), Times.Exactly(2));
         eventSimulatorWrapperMock.Verify(esw =>
-                esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
-                    expectedKeyCodes.Contains(kc))), Times.Exactly(2));
+            esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
+                expectedKeyCodes.Contains(kc))), Times.Exactly(2));
     }
 }

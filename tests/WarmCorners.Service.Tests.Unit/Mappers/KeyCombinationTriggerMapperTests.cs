@@ -94,7 +94,7 @@ public class KeyCombinationTriggerMapperTests
         result.Single(kct => kct.ScreenCorner == ScreenCorner.TopLeft).KeyCodes.Should()
             .ContainInOrder(KeyCode.VcLeftMeta, KeyCode.VcTab);
     }
-    
+
     private static void VerifyKeyCombinationOnTopRightScreenCorner(IReadOnlyCollection<KeyCombinationTrigger> result)
     {
         result.Should().ContainSingle(kct => kct.ScreenCorner == ScreenCorner.TopRight);

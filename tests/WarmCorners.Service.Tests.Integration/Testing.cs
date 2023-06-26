@@ -11,12 +11,12 @@ namespace WarmCorners.Service.Tests.Integration;
 
 public static class Testing
 {
+    private static readonly Subject<MouseHookEventArgs> TestMouseMovedSubject = new();
     private static readonly TestApplicationFactory TestApplicationFactory = new();
 
     public static (short Width, short Height) TestDisplaySize => (1024, 768);
     public static (short X, short Y) TopLeftCorner => (0, 0);
     public static (short X, short Y) TopRightCorner => (TestDisplaySize.Width, 0);
-    public static Subject<MouseHookEventArgs> TestMouseMovedSubject { get; } = new();
     public static IObservable<MouseHookEventArgs> TestMouseMoved { get; } = TestMouseMovedSubject.AsObservable();
     public static TestScheduler TestScheduler { get; } = new();
 
@@ -46,7 +46,7 @@ public static class Testing
             })));
         TestScheduler.Start();
     }
-    
+
     private static T GetRequiredService<T>()
         where T : notnull =>
         TestApplicationFactory.Services.GetRequiredService<T>();

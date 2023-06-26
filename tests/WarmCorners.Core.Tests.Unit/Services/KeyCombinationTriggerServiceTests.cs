@@ -42,9 +42,11 @@ public class KeyCombinationTriggerServiceTests
                 KeyCodes = keyCodes
             }
         };
-        
+
         // Act
-        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
+        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers,
+            Testing.TopLeftCorner.X,
+            Testing.TopLeftCorner.Y);
 
         // Assert
         InMemorySink.Instance
@@ -68,7 +70,9 @@ public class KeyCombinationTriggerServiceTests
         };
 
         // Act
-        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
+        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers,
+            Testing.TopLeftCorner.X,
+            Testing.TopLeftCorner.Y);
 
         // Assert
         this.VerifyNoKeyCombinationIsExecuted();
@@ -104,7 +108,9 @@ public class KeyCombinationTriggerServiceTests
         };
 
         // Act
-        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
+        this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers,
+            Testing.TopLeftCorner.X,
+            Testing.TopLeftCorner.Y);
 
         // Assert
         this.VerifyKeyCombinationIsNeverExecuted(bottomLeftKeys);

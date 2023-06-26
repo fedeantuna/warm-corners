@@ -64,7 +64,7 @@ public class CommandTriggerMapperTests
     private static void VerifyCommandOnTopLeftScreenCorner(IEnumerable<CommandTrigger> result) =>
         result.Should().ContainSingle(ct =>
             ct.ScreenCorner == ScreenCorner.TopLeft && ct.Command == Testing.SomeCommand);
-    
+
     private static void VerifyCommandOnTopRightScreenCorner(IEnumerable<CommandTrigger> result) =>
         result.Should().ContainSingle(ct =>
             ct.ScreenCorner == ScreenCorner.TopRight && ct.Command == Testing.SomeOtherCommand);
