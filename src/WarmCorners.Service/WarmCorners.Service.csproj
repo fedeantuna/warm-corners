@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Infrastructure\" />
+        <InternalsVisibleTo Include="WarmCorners.Service.Tests.Integration" />
     </ItemGroup>
+
 </Project>

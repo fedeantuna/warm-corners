@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Serilog;
 using Serilog.Sinks.InMemory;
 using WarmCorners.Service.Infrastructure.Wrapper;
+using WarmCorners.Service.Wrappers;
 
 namespace WarmCorners.Service.Tests.Unit;
 
@@ -13,7 +15,8 @@ public class ServiceProviderBuilder
 
     public ServiceProviderBuilder()
     {
-        this._services.AddInfrastructureServices();
+        this._services.AddInfrastructureServices()
+            .AddPresentationServices(new ConfigurationBuilder().Build());
 
         this.ReplaceWrappersWithMocks();
 
@@ -24,10 +27,11 @@ public class ServiceProviderBuilder
 
     private void ReplaceWrappersWithMocks()
     {
-        var user32Wrapper = this._services.Single(sd => sd.ServiceType == typeof(IUser32Wrapper));
-        this._services.Remove(user32Wrapper);
-        var user32WrapperMock = new Mock<IUser32Wrapper>();
-        this._services.AddSingleton(_ => user32WrapperMock.Object);
+        this._services.ReplaceServiceWithMock<ISimpleReactiveGlobalHookWrapper>();
+
+        var user32WrapperMock = this._services.ReplaceServiceWithMock<IUser32Wrapper>();
+        user32WrapperMock.Setup(u32W =>
+            u32W.GetScreenResolution()).Returns((Testing.TestDisplaySize.Width, Testing.TestDisplaySize.Height));
     }
 
     private void SetupInMemoryLogger() =>
@@ -41,4 +45,18 @@ public class ServiceProviderBuilder
                 .CreateLogger();
             builder.AddSerilog(logger);
         });
+}
+
+public static class ServiceCollectionExtensions
+{
+    public static Mock<TIService> ReplaceServiceWithMock<TIService>(this IServiceCollection services)
+        where TIService : class
+    {
+        var service = services.Single(sd => sd.ServiceType == typeof(TIService));
+        services.Remove(service);
+        var replace = new Mock<TIService>();
+        services.AddSingleton(_ => replace.Object);
+
+        return replace;
+    }
 }

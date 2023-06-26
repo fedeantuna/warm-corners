@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarmCorners.Core", "src\War
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarmCorners.Core.Tests.Unit", "tests\WarmCorners.Core.Tests.Unit\WarmCorners.Core.Tests.Unit.csproj", "{1732C514-6E31-4295-9B4A-4E17800CED66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarmCorners.Service.Tests.Integration", "tests\WarmCorners.Service.Tests.Integration\WarmCorners.Service.Tests.Integration.csproj", "{C68EC116-249A-45E0-B06B-B9AFDCF2EB2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +34,14 @@ Global
 		{1732C514-6E31-4295-9B4A-4E17800CED66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1732C514-6E31-4295-9B4A-4E17800CED66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1732C514-6E31-4295-9B4A-4E17800CED66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C68EC116-249A-45E0-B06B-B9AFDCF2EB2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C68EC116-249A-45E0-B06B-B9AFDCF2EB2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C68EC116-249A-45E0-B06B-B9AFDCF2EB2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C68EC116-249A-45E0-B06B-B9AFDCF2EB2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8F47EFDA-550B-4573-9C4E-436DDBFDBA93} = {E94B9BC6-2E64-4808-A710-BD8E3975D11D}
 		{1732C514-6E31-4295-9B4A-4E17800CED66} = {E94B9BC6-2E64-4808-A710-BD8E3975D11D}
+		{C68EC116-249A-45E0-B06B-B9AFDCF2EB2D} = {E94B9BC6-2E64-4808-A710-BD8E3975D11D}
 	EndGlobalSection
 EndGlobal

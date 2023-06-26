@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace WarmCorners.Service.Infrastructure.Wrapper;
 
@@ -11,6 +12,7 @@ public interface IUser32Wrapper
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class User32Wrapper : IUser32Wrapper
 {
+    [SupportedOSPlatform("windows")]
     public (int Width, int Height) GetScreenResolution()
     {
         const int ENUM_CURRENT_SETTINGS = -1;
