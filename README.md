@@ -262,3 +262,23 @@ Once `dotnet` is installed, you can use the following commands in your shell whi
 To get the coverage results, you can alternatively run the tests using the scripts `run_test_coverage.sh` and `run_test_coverage.ps1` that are in the `scripts` directory.
 
 If you prefer using an IDE, you can do so with Visual Studio, Visual Studio Code, JetBrains Rider and vi/vim/neovim. Others, like MonoDevelop, should also work fine as long as you have the `dotnet` SDK installed. If your IDE has the option, select `WarmCorners.Service` as the `Main Project`, `Startup Project` or `Entry Point`.
+
+## Create an issue
+
+Do you have ideas on how to improve WarmCorners? Are there things that bother you? Did you find any errors? Then please, create an issue!
+
+If you found a bug, create an issue from the `bug` template. If you want a new feature to be available, create an issue from the `feature` template. If you want to ask for a change in the code to improve quality, readability, etc. then create an issue from the `feature` template but update the label to the proper one:
+
+- **build**: Changes to the build system, like updating or adding a publish profile
+- **chore**: General changes, like updating or adding a script
+- **ci**: Changes to CI configuration and scripts (that are CI related), like updating a GitHub Workflow
+- **docs**: Improvements or additions to documentation
+- **feat**: New feature or request (default label for the `feature` template)
+- **fix**: Something isn't working, like triggers are not triggering
+- **perf**: Improvements on performance
+- **refactor**: Improvements on code quality
+- **test**: Adding or correcting tests
+
+The labels `dependencies` and `.NET` are only for `dependabot` to use. `duplicate`, `good first issue` and `wontfix` are only for maintainers to use.
+
+If you are not sure which label to use, you can just leave it blank or use the one you think fits better, don't be afraid to make a mistake!
