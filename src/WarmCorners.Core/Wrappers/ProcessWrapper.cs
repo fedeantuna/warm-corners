@@ -1,24 +1,22 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace WarmCorners.Core.Wrappers;
 
 public interface IProcessWrapper
 {
-    bool Start(string fileName, string arguments);
+    void SetStartInfo(ProcessStartInfo startInfo);
+    bool Start();
 }
 
+[ExcludeFromCodeCoverage(Justification = "Wrappers are just lightweight abstractions to facilitate testing")]
 public class ProcessWrapper : IProcessWrapper
 {
-    public bool Start(string fileName, string arguments)
-    {
-        var process = new Process
-        {
-            StartInfo = new ProcessStartInfo(fileName, arguments)
-            {
-                CreateNoWindow = true
-            }
-        };
+    private readonly Process _process = new();
 
-        return process.Start();
-    }
+    public void SetStartInfo(ProcessStartInfo startInfo)
+        => this._process.StartInfo = startInfo;
+
+    public bool Start() =>
+        this._process.Start();
 }

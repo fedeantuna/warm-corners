@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using Moq;
+using SharpHook;
 using SharpHook.Native;
+using SharpHook.Reactive;
 using WarmCorners.Core.Wrappers;
-using WarmCorners.Service.Wrappers;
 
 namespace WarmCorners.Service.Tests.Integration.Workers;
 
@@ -11,12 +13,12 @@ public class MainWorkerTests
     public void StartsListeningHooks()
     {
         // Arrange
-        var simpleReactiveGlobalHookWrapperMock = Testing.GetRequiredServiceMock<ISimpleReactiveGlobalHookWrapper>();
+        var reactiveGlobalHookMock = Testing.GetRequiredServiceMock<IReactiveGlobalHook>();
 
         // Act
 
         // Assert
-        simpleReactiveGlobalHookWrapperMock.Verify(rgh =>
+        reactiveGlobalHookMock.Verify(rgh =>
             rgh.RunAsync(), Times.Once);
     }
 
@@ -54,16 +56,19 @@ public class MainWorkerTests
     {
         var processWrapperMock = Testing.GetRequiredServiceMock<IProcessWrapper>();
         processWrapperMock.Verify(pw =>
-            pw.Start("cmd", $"/c {command}"), Times.Once);
+            pw.SetStartInfo(It.Is<ProcessStartInfo>(psi =>
+                psi.Arguments == $"/c {command}")), Times.Once);
+        processWrapperMock.Verify(pw =>
+            pw.Start(), Times.Once);
     }
 
     private static void VerifyKeyCombinationIsExecutedOnce(IEnumerable<KeyCode> expectedKeyCodes)
     {
-        var eventSimulatorWrapperMock = Testing.GetRequiredServiceMock<IEventSimulatorWrapper>();
-        eventSimulatorWrapperMock.Verify(esw =>
+        var eventSimulatorMock = Testing.GetRequiredServiceMock<IEventSimulator>();
+        eventSimulatorMock.Verify(esw =>
             esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
                 expectedKeyCodes.Contains(kc))), Times.Exactly(2));
-        eventSimulatorWrapperMock.Verify(esw =>
+        eventSimulatorMock.Verify(esw =>
             esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
                 expectedKeyCodes.Contains(kc))), Times.Exactly(2));
     }

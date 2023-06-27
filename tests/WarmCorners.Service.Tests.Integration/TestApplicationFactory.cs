@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using SharpHook;
+using SharpHook.Reactive;
 using WarmCorners.Core.Wrappers;
 using WarmCorners.Service.Infrastructure.Wrapper;
-using WarmCorners.Service.Wrappers;
 
 namespace WarmCorners.Service.Tests.Integration;
 
@@ -26,25 +27,26 @@ internal class TestApplicationFactory : WebApplicationFactory<Program>
             })
             .ConfigureServices(services =>
             {
-                services.ReplaceServiceWithMock<IEventSimulatorWrapper>();
+                services.ReplaceServiceWithMock<IEventSimulator>();
+                var reactiveGlobalHookMock = services.ReplaceServiceWithMock<IReactiveGlobalHook>();
+
                 services.ReplaceServiceWithMock<IProcessWrapper>();
                 var schedulerWrapperMock = services.ReplaceServiceWithMock<ISchedulerWrapper>();
-                var simpleReactiveGlobalHookWrapperMock = services.ReplaceServiceWithMock<ISimpleReactiveGlobalHookWrapper>();
                 var user32WrapperMock = services.ReplaceServiceWithMock<IUser32Wrapper>();
+
+                reactiveGlobalHookMock
+                    .Setup(rgh => rgh.MouseMoved)
+                    .Returns(Testing.TestMouseMoved);
+                reactiveGlobalHookMock
+                    .Setup(rgh => rgh.RunAsync())
+                    .Returns(new Subject<Unit>().AsObservable());
+                reactiveGlobalHookMock
+                    .Setup(rgh => rgh.Dispose())
+                    .Callback(() => { });
 
                 schedulerWrapperMock
                     .Setup(sw => sw.Default)
                     .Returns(Testing.TestScheduler);
-
-                simpleReactiveGlobalHookWrapperMock
-                    .Setup(rgh => rgh.MouseMoved)
-                    .Returns(Testing.TestMouseMoved);
-                simpleReactiveGlobalHookWrapperMock
-                    .Setup(rgh => rgh.RunAsync())
-                    .Returns(new Subject<Unit>().AsObservable());
-                simpleReactiveGlobalHookWrapperMock
-                    .Setup(rgh => rgh.Dispose())
-                    .Callback(() => { });
 
                 user32WrapperMock
                     .Setup(u32 => u32.GetScreenResolution())

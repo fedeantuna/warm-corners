@@ -3,24 +3,24 @@ using Moq;
 using Serilog.Events;
 using Serilog.Sinks.InMemory;
 using Serilog.Sinks.InMemory.Assertions;
+using SharpHook;
 using SharpHook.Native;
 using WarmCorners.Core.Common;
 using WarmCorners.Core.Services.Abstractions;
-using WarmCorners.Core.Wrappers;
 
 namespace WarmCorners.Core.Tests.Unit.Services;
 
 public class KeyCombinationTriggerServiceTests
 {
-    private readonly Mock<IEventSimulatorWrapper> _eventSimulatorWrapperMock;
+    private readonly Mock<IEventSimulator> _eventSimulatorMock;
     private readonly IKeyCombinationTriggerService _keyCombinationTriggerService;
 
     public KeyCombinationTriggerServiceTests()
     {
         var provider = new ServiceProviderBuilder().Build();
 
-        var eventSimulatorWrapper = provider.GetRequiredService<IEventSimulatorWrapper>();
-        this._eventSimulatorWrapperMock = Mock.Get(eventSimulatorWrapper);
+        var eventSimulator = provider.GetRequiredService<IEventSimulator>();
+        this._eventSimulatorMock = Mock.Get(eventSimulator);
 
         this._keyCombinationTriggerService = provider.GetRequiredService<IKeyCombinationTriggerService>();
     }
@@ -119,29 +119,29 @@ public class KeyCombinationTriggerServiceTests
 
     private void VerifyKeyCombinationIsExecuted(IReadOnlyCollection<KeyCode> keyCodes)
     {
-        this._eventSimulatorWrapperMock.Verify(esw =>
+        this._eventSimulatorMock.Verify(esw =>
             esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
                 keyCodes.Contains(kc))), Times.Exactly(keyCodes.Count));
-        this._eventSimulatorWrapperMock.Verify(esw =>
+        this._eventSimulatorMock.Verify(esw =>
             esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
                 keyCodes.Contains(kc))), Times.Exactly(keyCodes.Count));
     }
 
     private void VerifyKeyCombinationIsNeverExecuted(IEnumerable<KeyCode> keyCodes)
     {
-        this._eventSimulatorWrapperMock.Verify(esw =>
+        this._eventSimulatorMock.Verify(esw =>
             esw.SimulateKeyPress(It.Is<KeyCode>(kc =>
                 keyCodes.Contains(kc))), Times.Never);
-        this._eventSimulatorWrapperMock.Verify(esw =>
+        this._eventSimulatorMock.Verify(esw =>
             esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
                 keyCodes.Contains(kc))), Times.Never);
     }
 
     private void VerifyNoKeyCombinationIsExecuted()
     {
-        this._eventSimulatorWrapperMock.Verify(esw =>
+        this._eventSimulatorMock.Verify(esw =>
             esw.SimulateKeyPress(It.IsAny<KeyCode>()), Times.Never);
-        this._eventSimulatorWrapperMock.Verify(esw =>
+        this._eventSimulatorMock.Verify(esw =>
             esw.SimulateKeyRelease(It.IsAny<KeyCode>()), Times.Never);
     }
 }

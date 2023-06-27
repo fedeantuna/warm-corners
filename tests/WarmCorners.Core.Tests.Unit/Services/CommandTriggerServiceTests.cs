@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Serilog.Events;
 using Serilog.Sinks.InMemory;
@@ -37,6 +38,8 @@ public class CommandTriggerServiceTests
             }
         };
 
+        this._processWrapperMock.Setup(pw => pw.Start()).Returns(true);
+
         // Act
         this._commandTriggerService.ProcessCommandTrigger(commandTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
 
@@ -60,6 +63,8 @@ public class CommandTriggerServiceTests
                 Command = Testing.CommandThatRunsUnsuccessfully
             }
         };
+
+        this._processWrapperMock.Setup(pw => pw.Start()).Returns(false);
 
         // Act
         this._commandTriggerService.ProcessCommandTrigger(commandTriggers, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y);
@@ -95,14 +100,20 @@ public class CommandTriggerServiceTests
 
         // Assert
         this.VerifyCommandIsNeverExecuted(Testing.CommandThatRunsSuccessfully);
-        this.VerifyCommandIsExecuted(Testing.CommandThatRunsUnsuccessfully);
+        this.VerifyCommandIsExecutedOnce(Testing.CommandThatRunsUnsuccessfully);
     }
 
     private void VerifyCommandIsNeverExecuted(string command) =>
         this._processWrapperMock.Verify(pw =>
-            pw.Start("cmd", $"/c {command}"), Times.Never);
+            pw.SetStartInfo(It.Is<ProcessStartInfo>(psi =>
+                psi.Arguments == $"/c {command}")), Times.Never);
 
-    private void VerifyCommandIsExecuted(string command) =>
+    private void VerifyCommandIsExecutedOnce(string command)
+    {
         this._processWrapperMock.Verify(pw =>
-            pw.Start("cmd", $"/c {command}"), Times.Once);
+            pw.SetStartInfo(It.Is<ProcessStartInfo>(psi =>
+                psi.Arguments == $"/c {command}")), Times.Once);
+        this._processWrapperMock.Verify(pw =>
+            pw.Start(), Times.Once);
+    }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Serilog;
 using Serilog.Sinks.InMemory;
+using SharpHook;
 using WarmCorners.Core.Common;
 using WarmCorners.Core.Services.Abstractions;
 using WarmCorners.Core.Wrappers;
@@ -19,27 +20,19 @@ public class ServiceProviderBuilder
 
         this.ReplaceWrappersWithMocks();
 
-        this.AddPresentationServiceMocks();
+        this.AddInfrastructureServiceMocks();
 
+        this.SetupEventSimulatorMock();
         this.SetupInMemoryLogger();
     }
 
-    public IServiceProvider Build() => this._services.BuildServiceProvider();
+    public IServiceProvider Build() =>
+        this._services.BuildServiceProvider();
 
-    private void ReplaceWrappersWithMocks()
-    {
-        this._services.ReplaceServiceWithMock<IEventSimulatorWrapper>();
+    private void ReplaceWrappersWithMocks() =>
+        this._services.ReplaceServiceWithMock<IProcessWrapper>();
 
-        var processWrapperMock = this._services.ReplaceServiceWithMock<IProcessWrapper>();
-        processWrapperMock
-            .Setup(pw => pw.Start("cmd", $"/c {Testing.CommandThatRunsSuccessfully}"))
-            .Returns(true);
-        processWrapperMock
-            .Setup(pw => pw.Start("cmd", $"/c {Testing.CommandThatRunsUnsuccessfully}"))
-            .Returns(false);
-    }
-
-    private void AddPresentationServiceMocks()
+    private void AddInfrastructureServiceMocks()
     {
         var screenServiceMock = new Mock<IScreenService>();
         screenServiceMock
@@ -57,6 +50,9 @@ public class ServiceProviderBuilder
         this._services.AddSingleton(_ => screenServiceMock.Object);
     }
 
+    private void SetupEventSimulatorMock() =>
+        this._services.ReplaceServiceWithMock<IEventSimulator>();
+
     private void SetupInMemoryLogger() =>
         this._services.AddLogging(builder =>
         {
@@ -72,14 +68,12 @@ public class ServiceProviderBuilder
 
 public static class ServiceCollectionExtensions
 {
-    public static Mock<TIService> ReplaceServiceWithMock<TIService>(this IServiceCollection services)
+    public static void ReplaceServiceWithMock<TIService>(this IServiceCollection services)
         where TIService : class
     {
         var service = services.Single(sd => sd.ServiceType == typeof(TIService));
         services.Remove(service);
         var replace = new Mock<TIService>();
         services.AddSingleton(_ => replace.Object);
-
-        return replace;
     }
 }
