@@ -5,4 +5,18 @@
 
 # WarmCorners
 
-WarmCorners is a solution compatible with Windows that provides a feature similar to hot corners on GNOME. This basically means that you can setup triggers for when you move the mouse over the main screen corners.
+WarmCorners is a solution compatible with Windows that provides a feature similar to `Hot Corners` on GNOME. Basically you can setup triggers for when you move the mouse over the corners of main screen.
+
+## Build from source
+
+In order to build from source you need the `dotnet` SDK and the source code. This project is using version 7.0, you can download it from the [official website](https://dotnet.microsoft.com/en-us/).
+
+Once `dotnet` is installed, you can use the following commands in your shell while in the solution root directory (directory where the `WarmCorners.sln` file is located):
+
+- Build the solution: `dotnet build`
+- Run the solution: `dotnet run --project src/WarmCorners.Service`
+- Run tests: `dotnet test`
+
+To get the coverage results, you can alternatively run the tests using the scripts `run_test_coverage.sh` and `run_test_coverage.ps1` that are in the `scripts` directory.
+
+If you prefer using an IDE, you can do so with Visual Studio, Visual Studio Code, JetBrains Rider and vi/vim/neovim. Others, like MonoDevelop, should also work fine as long as you have the `dotnet` SDK installed. If your IDE has the option, select `WarmCorners.Service` as the `Main Project`, `Startup Project` or `Entry Point`.
