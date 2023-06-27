@@ -13,28 +13,14 @@ public class ScreenService : IScreenService
 
     public bool IsMouseCursorInCorner(ScreenCorner screenCorner, int x, int y)
     {
-        var (thresholdX, thresholdY) = this.GetScreenCornerThresholds(screenCorner);
-
-        return screenCorner switch
-        {
-            ScreenCorner.TopLeft => x <= thresholdX && y <= thresholdY,
-            ScreenCorner.TopRight => x >= thresholdX && y <= thresholdY,
-            ScreenCorner.BottomRight => x >= thresholdX && y >= thresholdY,
-            ScreenCorner.BottomLeft => x <= thresholdX && y >= thresholdY,
-            _ => throw new ArgumentOutOfRangeException(nameof(screenCorner), screenCorner, null)
-        };
-    }
-
-    private (int ThresholdX, int ThresholdY) GetScreenCornerThresholds(ScreenCorner screenCorner)
-    {
         var (width, height) = this._user32Wrapper.GetScreenResolution();
 
         return screenCorner switch
         {
-            ScreenCorner.TopLeft => (0, 0),
-            ScreenCorner.TopRight => (width, 0),
-            ScreenCorner.BottomRight => (width, height),
-            ScreenCorner.BottomLeft => (0, height),
+            ScreenCorner.TopLeft => x <= 0 && y <= 0,
+            ScreenCorner.TopRight => x >= width && y <= 0,
+            ScreenCorner.BottomRight => x >= width && y >= height,
+            ScreenCorner.BottomLeft => x <= 0 && y >= height,
             _ => throw new ArgumentOutOfRangeException(nameof(screenCorner), screenCorner, null)
         };
     }

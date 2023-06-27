@@ -77,12 +77,26 @@ public class ScreenServiceTests
     [MemberData(nameof(TopRightCornerTestCases))]
     [MemberData(nameof(BottomRightCornerTestCases))]
     [MemberData(nameof(BottomLeftCornerTestCases))]
-    public void GetsTheCurrentCornerThresholdsForTheCurrentScreenResolution(ScreenCorner screenCorner, int x, int y, bool expectedResult)
+    public void IsMouseCursorInCorner_GetsTheCurrentCornerThresholdsForTheCurrentScreenResolution(ScreenCorner screenCorner, int x, int y,
+        bool expectedResult)
     {
         // Act
         var result = this._screenResolutionProvider.IsMouseCursorInCorner(screenCorner, x, y);
 
         // Assert
         result.Should().Be(expectedResult);
+    }
+
+    [Fact]
+    public void IsMouseCursorInCorner_ThrowsArgumentOutOfRangeExceptionWhenScreenCornerIsNotValid()
+    {
+        // Arrange
+        const ScreenCorner invalidScreenCorner = (ScreenCorner)4;
+
+        // Act
+        var act = () => this._screenResolutionProvider.IsMouseCursorInCorner(invalidScreenCorner, 0, 0);
+
+        // Assert
+        act.Should().Throw<ArgumentOutOfRangeException>();
     }
 }
