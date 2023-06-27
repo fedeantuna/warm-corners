@@ -26,20 +26,11 @@ public class ServiceProviderBuilder
         this.SetupInMemoryLogger();
     }
 
-    public IServiceProvider Build() => this._services.BuildServiceProvider();
+    public IServiceProvider Build() =>
+        this._services.BuildServiceProvider();
 
-    private void ReplaceWrappersWithMocks()
-    {
-        this._services.ReplaceServiceWithMock<IEventSimulator>();
-
-        var processWrapperMock = this._services.ReplaceServiceWithMock<IProcessWrapper>();
-        processWrapperMock
-            .Setup(pw => pw.Start("cmd", $"/c {Testing.CommandThatRunsSuccessfully}"))
-            .Returns(true);
-        processWrapperMock
-            .Setup(pw => pw.Start("cmd", $"/c {Testing.CommandThatRunsUnsuccessfully}"))
-            .Returns(false);
-    }
+    private void ReplaceWrappersWithMocks() =>
+        this._services.ReplaceServiceWithMock<IProcessWrapper>();
 
     private void AddInfrastructureServiceMocks()
     {
@@ -58,7 +49,7 @@ public class ServiceProviderBuilder
             .Returns(false);
         this._services.AddSingleton(_ => screenServiceMock.Object);
     }
-    
+
     private void SetupEventSimulatorMock() =>
         this._services.ReplaceServiceWithMock<IEventSimulator>();
 
@@ -77,14 +68,12 @@ public class ServiceProviderBuilder
 
 public static class ServiceCollectionExtensions
 {
-    public static Mock<TIService> ReplaceServiceWithMock<TIService>(this IServiceCollection services)
+    public static void ReplaceServiceWithMock<TIService>(this IServiceCollection services)
         where TIService : class
     {
         var service = services.Single(sd => sd.ServiceType == typeof(TIService));
         services.Remove(service);
         var replace = new Mock<TIService>();
         services.AddSingleton(_ => replace.Object);
-
-        return replace;
     }
 }

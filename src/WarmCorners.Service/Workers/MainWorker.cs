@@ -12,8 +12,8 @@ public class MainWorker : BackgroundService
 {
     private readonly ICommandTriggerService _commandTriggerService;
     private readonly IKeyCombinationTriggerService _keyCombinationTriggerService;
-    private readonly ISchedulerWrapper _schedulerWrapper;
     private readonly IReactiveGlobalHook _reactiveGlobalHook;
+    private readonly ISchedulerWrapper _schedulerWrapper;
     private readonly IOptionsMonitor<TriggerConfiguration> _triggerConfigurationMonitor;
 
     public MainWorker(ICommandTriggerService commandTriggerService,

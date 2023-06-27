@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Moq;
 using SharpHook;
 using SharpHook.Native;
@@ -55,7 +56,10 @@ public class MainWorkerTests
     {
         var processWrapperMock = Testing.GetRequiredServiceMock<IProcessWrapper>();
         processWrapperMock.Verify(pw =>
-            pw.Start("cmd", $"/c {command}"), Times.Once);
+            pw.SetStartInfo(It.Is<ProcessStartInfo>(psi =>
+                psi.Arguments == $"/c {command}")), Times.Once);
+        processWrapperMock.Verify(pw =>
+            pw.Start(), Times.Once);
     }
 
     private static void VerifyKeyCombinationIsExecutedOnce(IEnumerable<KeyCode> expectedKeyCodes)

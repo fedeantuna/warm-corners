@@ -29,7 +29,7 @@ internal class TestApplicationFactory : WebApplicationFactory<Program>
             {
                 services.ReplaceServiceWithMock<IEventSimulator>();
                 var reactiveGlobalHookMock = services.ReplaceServiceWithMock<IReactiveGlobalHook>();
-                
+
                 services.ReplaceServiceWithMock<IProcessWrapper>();
                 var schedulerWrapperMock = services.ReplaceServiceWithMock<ISchedulerWrapper>();
                 var user32WrapperMock = services.ReplaceServiceWithMock<IUser32Wrapper>();
@@ -43,7 +43,7 @@ internal class TestApplicationFactory : WebApplicationFactory<Program>
                 reactiveGlobalHookMock
                     .Setup(rgh => rgh.Dispose())
                     .Callback(() => { });
-                
+
                 schedulerWrapperMock
                     .Setup(sw => sw.Default)
                     .Returns(Testing.TestScheduler);

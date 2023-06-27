@@ -21,7 +21,7 @@ public static class ConfigureServices
 
     private static void AddCoreWrappers(this IServiceCollection services)
     {
-        services.AddSingleton<IProcessWrapper, ProcessWrapper>();
+        services.AddTransient<IProcessWrapper, ProcessWrapper>();
         services.AddSingleton<ISchedulerWrapper, SchedulerWrapper>();
     }
 }

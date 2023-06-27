@@ -4,21 +4,20 @@ namespace WarmCorners.Core.Wrappers;
 
 public interface IProcessWrapper
 {
-    bool Start(string fileName, string arguments);
+    ProcessStartInfo StartInfo { get; }
+    void SetStartInfo(ProcessStartInfo startInfo);
+    bool Start();
 }
 
 public class ProcessWrapper : IProcessWrapper
 {
-    public bool Start(string fileName, string arguments)
-    {
-        var process = new Process
-        {
-            StartInfo = new ProcessStartInfo(fileName, arguments)
-            {
-                CreateNoWindow = true
-            }
-        };
+    private readonly Process _process = new();
 
-        return process.Start();
-    }
+    public ProcessStartInfo StartInfo => this._process.StartInfo;
+
+    public void SetStartInfo(ProcessStartInfo startInfo)
+        => this._process.StartInfo = startInfo;
+
+    public bool Start() =>
+        this._process.Start();
 }
