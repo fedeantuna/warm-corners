@@ -29,6 +29,6 @@ jobs:
         run: |
           dotnet jb inspectcode WarmCorners.sln --output=jb-inspectcode-report.xml --format=xml --build -a
           echo "============================================================================================"
-          cat jb-inspectcode-report.xml
+          echo "\n" | cat jb-inspectcode-report.xml -
           echo "============================================================================================"
           grep -q "<Issues />" jb-inspectcode-report.xml || exit 1
