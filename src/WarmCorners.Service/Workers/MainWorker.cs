@@ -1,10 +1,10 @@
 using System.Reactive.Linq;
 using Microsoft.Extensions.Options;
+using SharpHook.Reactive;
 using WarmCorners.Core.Services.Abstractions;
 using WarmCorners.Core.Wrappers;
 using WarmCorners.Service.Configurations;
 using WarmCorners.Service.Mappers;
-using WarmCorners.Service.Wrappers;
 
 namespace WarmCorners.Service.Workers;
 
@@ -13,25 +13,25 @@ public class MainWorker : BackgroundService
     private readonly ICommandTriggerService _commandTriggerService;
     private readonly IKeyCombinationTriggerService _keyCombinationTriggerService;
     private readonly ISchedulerWrapper _schedulerWrapper;
-    private readonly ISimpleReactiveGlobalHookWrapper _simpleReactiveGlobalHookWrapper;
+    private readonly IReactiveGlobalHook _reactiveGlobalHook;
     private readonly IOptionsMonitor<TriggerConfiguration> _triggerConfigurationMonitor;
 
     public MainWorker(ICommandTriggerService commandTriggerService,
         IKeyCombinationTriggerService keyCombinationService,
         IOptionsMonitor<TriggerConfiguration> triggerConfigurationMonitor,
-        ISimpleReactiveGlobalHookWrapper simpleReactiveGlobalHookWrapper,
+        IReactiveGlobalHook reactiveGlobalHook,
         ISchedulerWrapper schedulerWrapper)
     {
         this._commandTriggerService = commandTriggerService;
         this._keyCombinationTriggerService = keyCombinationService;
         this._triggerConfigurationMonitor = triggerConfigurationMonitor;
-        this._simpleReactiveGlobalHookWrapper = simpleReactiveGlobalHookWrapper;
+        this._reactiveGlobalHook = reactiveGlobalHook;
         this._schedulerWrapper = schedulerWrapper;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        this._simpleReactiveGlobalHookWrapper.MouseMoved
+        this._reactiveGlobalHook.MouseMoved
             .Throttle(TimeSpan.FromMilliseconds(100), this._schedulerWrapper.Default)
             .Subscribe(args =>
             {
@@ -50,12 +50,12 @@ public class MainWorker : BackgroundService
                 this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, x, y);
             }, stoppingToken);
 
-        await this._simpleReactiveGlobalHookWrapper.RunAsync();
+        await this._reactiveGlobalHook.RunAsync();
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
     {
-        this._simpleReactiveGlobalHookWrapper.Dispose();
+        this._reactiveGlobalHook.Dispose();
 
         return base.StopAsync(cancellationToken);
     }

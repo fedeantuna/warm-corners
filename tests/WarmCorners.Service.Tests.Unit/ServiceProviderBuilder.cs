@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Serilog;
 using Serilog.Sinks.InMemory;
+using SharpHook.Reactive;
 using WarmCorners.Service.Infrastructure.Wrapper;
-using WarmCorners.Service.Wrappers;
 
 namespace WarmCorners.Service.Tests.Unit;
 
@@ -20,6 +20,7 @@ public class ServiceProviderBuilder
 
         this.ReplaceWrappersWithMocks();
 
+        this.SetupReactiveGlobalHookMock();
         this.SetupInMemoryLogger();
     }
 
@@ -27,12 +28,13 @@ public class ServiceProviderBuilder
 
     private void ReplaceWrappersWithMocks()
     {
-        this._services.ReplaceServiceWithMock<ISimpleReactiveGlobalHookWrapper>();
-
         var user32WrapperMock = this._services.ReplaceServiceWithMock<IUser32Wrapper>();
         user32WrapperMock.Setup(u32W =>
             u32W.GetScreenResolution()).Returns((Testing.TestDisplaySize.Width, Testing.TestDisplaySize.Height));
     }
+    
+    private void SetupReactiveGlobalHookMock() =>
+        this._services.ReplaceServiceWithMock<IReactiveGlobalHook>();
 
     private void SetupInMemoryLogger() =>
         this._services.AddLogging(builder =>

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Serilog;
 using Serilog.Sinks.InMemory;
+using SharpHook;
 using WarmCorners.Core.Common;
 using WarmCorners.Core.Services.Abstractions;
 using WarmCorners.Core.Wrappers;
@@ -19,8 +20,9 @@ public class ServiceProviderBuilder
 
         this.ReplaceWrappersWithMocks();
 
-        this.AddPresentationServiceMocks();
+        this.AddInfrastructureServiceMocks();
 
+        this.SetupEventSimulatorMock();
         this.SetupInMemoryLogger();
     }
 
@@ -28,7 +30,7 @@ public class ServiceProviderBuilder
 
     private void ReplaceWrappersWithMocks()
     {
-        this._services.ReplaceServiceWithMock<IEventSimulatorWrapper>();
+        this._services.ReplaceServiceWithMock<IEventSimulator>();
 
         var processWrapperMock = this._services.ReplaceServiceWithMock<IProcessWrapper>();
         processWrapperMock
@@ -39,7 +41,7 @@ public class ServiceProviderBuilder
             .Returns(false);
     }
 
-    private void AddPresentationServiceMocks()
+    private void AddInfrastructureServiceMocks()
     {
         var screenServiceMock = new Mock<IScreenService>();
         screenServiceMock
@@ -56,6 +58,9 @@ public class ServiceProviderBuilder
             .Returns(false);
         this._services.AddSingleton(_ => screenServiceMock.Object);
     }
+    
+    private void SetupEventSimulatorMock() =>
+        this._services.ReplaceServiceWithMock<IEventSimulator>();
 
     private void SetupInMemoryLogger() =>
         this._services.AddLogging(builder =>

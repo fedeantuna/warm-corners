@@ -1,21 +1,21 @@
 ﻿using Microsoft.Extensions.Logging;
+using SharpHook;
 using WarmCorners.Core.Services.Abstractions;
-using WarmCorners.Core.Wrappers;
 
 namespace WarmCorners.Core.Services;
 
 public class KeyCombinationTriggerService : IKeyCombinationTriggerService
 {
-    private readonly IEventSimulatorWrapper _eventSimulatorWrapper;
+    private readonly IEventSimulator _eventSimulator;
     private readonly ILogger<KeyCombinationTriggerService> _logger;
     private readonly IScreenService _screenService;
 
-    public KeyCombinationTriggerService(IEventSimulatorWrapper eventSimulatorWrapper,
+    public KeyCombinationTriggerService(IEventSimulator eventSimulator,
         ILogger<KeyCombinationTriggerService> logger,
         IScreenService screenService)
     {
         this._logger = logger;
-        this._eventSimulatorWrapper = eventSimulatorWrapper;
+        this._eventSimulator = eventSimulator;
         this._screenService = screenService;
     }
 
@@ -28,8 +28,8 @@ public class KeyCombinationTriggerService : IKeyCombinationTriggerService
             if (!shouldTriggerCommand || !keyCombination.KeyCodes.Any())
                 return;
 
-            keyCombination.KeyCodes.ToList().ForEach(key => this._eventSimulatorWrapper.SimulateKeyPress(key));
-            keyCombination.KeyCodes.ToList().ForEach(key => this._eventSimulatorWrapper.SimulateKeyRelease(key));
+            keyCombination.KeyCodes.ToList().ForEach(key => this._eventSimulator.SimulateKeyPress(key));
+            keyCombination.KeyCodes.ToList().ForEach(key => this._eventSimulator.SimulateKeyRelease(key));
 
             this._logger.LogInformation("Executed {KeyCombination}",
                 string.Join('+', keyCombination.KeyCodes.Select(kc => kc.ToString())));

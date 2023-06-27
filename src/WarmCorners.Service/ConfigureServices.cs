@@ -4,7 +4,6 @@ using WarmCorners.Service.Configurations;
 using WarmCorners.Service.Infrastructure.Services;
 using WarmCorners.Service.Infrastructure.Wrapper;
 using WarmCorners.Service.Workers;
-using WarmCorners.Service.Wrappers;
 
 namespace WarmCorners.Service;
 
@@ -13,8 +12,6 @@ public static class ConfigureServices
     public static void AddPresentationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<IReactiveGlobalHook, SimpleReactiveGlobalHook>();
-
-        services.AddPresentationWrappers();
 
         services.AddConfigurations(configuration);
 
@@ -32,9 +29,6 @@ public static class ConfigureServices
 
     private static void AddConfigurations(this IServiceCollection services, IConfiguration configuration) =>
         services.Configure<TriggerConfiguration>(configuration.GetSection("Triggers"));
-
-    private static void AddPresentationWrappers(this IServiceCollection services) =>
-        services.AddSingleton<ISimpleReactiveGlobalHookWrapper, SimpleReactiveGlobalHookWrapper>();
 
     private static void AddInfrastructureWrappers(this IServiceCollection services) =>
         services.AddSingleton<IUser32Wrapper, User32Wrapper>();
