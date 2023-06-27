@@ -5,6 +5,8 @@ using Moq;
 using Serilog;
 using Serilog.Sinks.InMemory;
 using SharpHook.Reactive;
+using WarmCorners.Core.Services.Abstractions;
+using WarmCorners.Core.Wrappers;
 using WarmCorners.Service.Infrastructure.Wrapper;
 
 namespace WarmCorners.Service.Tests.Unit;
@@ -18,7 +20,10 @@ public class ServiceProviderBuilder
         this._services.AddInfrastructureServices()
             .AddPresentationServices(new ConfigurationBuilder().Build());
 
+        this.AddCoreWrapperMocks();
         this.ReplaceWrappersWithMocks();
+
+        this.AddCoreServiceMocks();
 
         this.SetupReactiveGlobalHookMock();
         this.SetupInMemoryLogger();
@@ -26,11 +31,26 @@ public class ServiceProviderBuilder
 
     public IServiceProvider Build() => this._services.BuildServiceProvider();
 
+    private void AddCoreWrapperMocks()
+    {
+        var schedulerWrapperMock = new Mock<ISchedulerWrapper>();
+        this._services.AddSingleton(schedulerWrapperMock.Object);
+    }
+
     private void ReplaceWrappersWithMocks()
     {
         var user32WrapperMock = this._services.ReplaceServiceWithMock<IUser32Wrapper>();
         user32WrapperMock.Setup(u32W =>
             u32W.GetScreenResolution()).Returns((Testing.TestDisplaySize.Width, Testing.TestDisplaySize.Height));
+    }
+
+    private void AddCoreServiceMocks()
+    {
+        var commandTriggerServiceMock = new Mock<ICommandTriggerService>();
+        this._services.AddSingleton(_ => commandTriggerServiceMock.Object);
+
+        var keyCombinationTriggerServiceMock = new Mock<IKeyCombinationTriggerService>();
+        this._services.AddSingleton(_ => keyCombinationTriggerServiceMock.Object);
     }
 
     private void SetupReactiveGlobalHookMock() =>

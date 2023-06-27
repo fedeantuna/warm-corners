@@ -18,10 +18,9 @@ public static class ConfigureLogging
         var loggerConfiguration = new LoggerConfiguration()
             .Enrich.FromLogContext();
 
+        loggerConfiguration.MinimumLevel.Information();
         if (context.IsDevelopment())
             loggerConfiguration.MinimumLevel.Debug();
-        else
-            loggerConfiguration.MinimumLevel.Information();
 
         var logger = loggerConfiguration
             .WriteTo.Console(theme: AnsiConsoleTheme.Code)
