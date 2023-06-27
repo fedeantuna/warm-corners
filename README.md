@@ -7,6 +7,248 @@
 
 WarmCorners is a solution compatible with Windows that provides a feature similar to `Hot Corners` on GNOME. Basically you can setup triggers for when you move the mouse over the corners of main screen.
 
+## Usage
+
+WarmCorners detects where your mouse cursor is in real time. If it's over a corner where you have a trigger configured, it will execute the trigger.
+
+The way to configure triggers is using the `appsettings.json` file. If you installed the software using the installation script, then the file should be located under `%APPDATA%\WarmCorners\`.
+
+You can configure `Command Triggers` and `Key Combination Triggers`, even both at the same time. By default there will be a single `Key Combination Trigger`.
+
+### Command Triggers
+
+Command Triggers are triggers that when activated will execute a command. These triggers are configured as items in a list called `CommandTriggers` inside the `Triggers` key. Lets say you want to execute the notepad command when you move your mouse cursor over the top right corner, you will need to have the following in your `appsettings.json`:
+
+```json
+{
+  "Triggers": {
+    "CommandTriggers": [
+      {
+        "ScreenCorner": "TopRight",
+        "Command": "notepad"
+      }
+    ]
+  }
+}
+```
+
+The possible values for the `ScreenCorner` are:
+
+- TopLeft
+- TopRight
+- BottomRight
+- BottomLeft
+
+These are all case insensitive, so you can use whatever casing you like the most.
+
+The possible values for the `Command` are any command that you can run using `cmd`.
+
+If you want to add more tha one Command Trigger, just add another entry to that list following the same rules.
+
+### Key Combination Triggers
+
+Key Combination Triggers are triggers that when activated will execute a key combination. These triggers are configured as items in a list called `KeyCombinationTriggers` inside the `Triggers` key. Lets say you want to execute the `WindowsKey + Tab` key combination when you move your mouse cursor over the top left corner in order to have a similar behavior to the `Activities` on `GNOME`. You will need to have the following in your `appsettings.json`:
+
+```json
+{
+  "Triggers": {
+    "KeyCombinationTriggers": [
+      {
+        "ScreenCorner": "TopLeft",
+        "KeyCombination": "LeftMeta+Tab"
+      }
+    ]
+  }
+}
+```
+
+The possible values for the `ScreenCorner` are:
+
+- TopLeft
+- TopRight
+- BottomRight
+- BottomLeft
+
+These are all case insensitive, so you can use whatever casing you like the most.
+
+The possible values for the `KeyCombination` are any valid keys (see below) joined together with a `+` sign.
+
+If you want to add more tha one Key Combination Trigger, just add another entry to that list following the same rules.
+
+Valid Keys for `KeyCombination`:
+
+- Escape
+- F1
+- F2
+- F3
+- F4
+- F5
+- F6
+- F7
+- F8
+- F9
+- F10
+- F11
+- F12
+- F13
+- F14
+- F15
+- F16
+- F17
+- F18
+- F19
+- F20
+- F21
+- F22
+- F23
+- F24
+- Backquote
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6
+- 7
+- 8
+- 9
+- 0
+- Minus
+- Equals
+- Backspace
+- Tab
+- CapsLock
+- A
+- B
+- C
+- D
+- E
+- F
+- G
+- H
+- I
+- J
+- K
+- L
+- M
+- N
+- O
+- P
+- Q
+- R
+- S
+- T
+- U
+- V
+- W
+- X
+- Y
+- Z
+- OpenBracket
+- CloseBracket
+- BackSlash
+- Semicolon
+- Quote
+- Enter
+- Comma
+- Period
+- Slash
+- Space
+- PrintScreen
+- ScrollLock
+- Pause
+- LesserGreater
+- Insert
+- Delete
+- Home
+- End
+- PageUp
+- PageDown
+- Up
+- Left
+- Clear
+- Right
+- Down
+- NumLock
+- NumPadDivide
+- NumPadMultiply
+- NumPadSubtract
+- NumPadEquals
+- NumPadAdd
+- NumPadEnter
+- NumPadSeparator
+- NumPad1
+- NumPad2
+- NumPad3
+- NumPad4
+- NumPad5
+- NumPad6
+- NumPad7
+- NumPad8
+- NumPad9
+- NumPad0
+- NumPadEnd
+- NumPadDown
+- NumPadPageDown
+- NumPadLeft
+- NumPadClear
+- NumPadRight
+- NumPadHome
+- NumPadUp
+- NumPadPageUp
+- NumPadInsert
+- NumPadDelete
+- LeftShift
+- RightShift
+- LeftControl
+- RightControl
+- LeftAlt
+- RightAlt
+- LeftMeta
+- RightMeta
+- ContextMenu
+- Power
+- Sleep
+- Wake
+- MediaPlay
+- MediaStop
+- MediaPrevious
+- MediaNext
+- MediaSelect
+- MediaEject
+- VolumeMute
+- VolumeUp
+- VolumeDown
+- AppMail
+- AppCalculator
+- AppMusic
+- AppPictures
+- BrowserSearch
+- BrowserHome
+- BrowserBack
+- BrowserForward
+- BrowserStop
+- BrowserRefresh
+- BrowserFavorites
+- Katakana
+- Underscore
+- Furigana
+- Kanji
+- Hiragana
+- Yen
+- NumPadComma
+- SunHelp
+- SunStop
+- SunProps
+- SunFront
+- SunOpen
+- SunFind
+- SunAgain
+- SunUndo
+- SunCopy
+- SunInsert
+- SunCut
+
 ## Build from source
 
 In order to build from source you need the `dotnet` SDK and the source code. This project is using version 7.0, you can download it from the [official website](https://dotnet.microsoft.com/en-us/).
