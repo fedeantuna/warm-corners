@@ -9,6 +9,7 @@ public interface IUser32Wrapper
     (int Width, int Height) GetScreenResolution();
 }
 
+[ExcludeFromCodeCoverage(Justification = "Wrappers are just lightweight abstractions to facilitate testing")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class User32Wrapper : IUser32Wrapper
 {

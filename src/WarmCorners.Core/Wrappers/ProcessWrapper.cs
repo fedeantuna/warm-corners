@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace WarmCorners.Core.Wrappers;
 
@@ -8,6 +9,7 @@ public interface IProcessWrapper
     bool Start();
 }
 
+[ExcludeFromCodeCoverage(Justification = "Wrappers are just lightweight abstractions to facilitate testing")]
 public class ProcessWrapper : IProcessWrapper
 {
     private readonly Process _process = new();
