@@ -7,6 +7,25 @@
 
 WarmCorners is a solution compatible with Windows that provides a feature similar to `Hot Corners` on GNOME. Basically you can setup triggers for when you move the mouse over the corners of main screen.
 
+## Installation
+
+### Script (recommended)
+
+It's recommended to use the latest [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3#install-powershell-using-winget-recommended)
+
+From your `powershell` terminal, run
+`(Invoke-WebRequest "https://raw.githubusercontent.com/fedeantuna/warm-corners/main/install.ps1").Content | Invoke-Expression` to install the latest version.
+
+The script will automatically detect the architecture and edition that best suits your system.
+
+Using this method will install the application under `%APPDATA%\WarmCorners\`. The logs will be stored under `%LOCALAPPDATA%\WarmCorners\`.
+
+### Manual download
+
+With the manual download you can choose exactly which version you want, it's always recommended that you use the latest one. Navigate to the [releases site](https://github.com/fedeantuna/warm-corners/releases) and choose the version, edition and architecture you want to download.
+
+The `sc` edition is `self-contained`. This means that it doesn't need any dependency at the cost of a bigger size. The regular edition is a "lightweight" edition. It's much smaller in size but you will need to install the [.NET Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) if it's not already installed (you can check this by running `dotnet --list-runtimes`).
+
 ## Usage
 
 WarmCorners detects where your mouse cursor is in real time. If it's over a corner where you have a trigger configured, it will execute the trigger.
@@ -279,6 +298,6 @@ If you found a bug, create an issue from the `bug` template. If you want a new f
 *   **refactor**: Improvements on code quality
 *   **test**: Adding or correcting tests
 
-The labels `dependencies` and `.NET` are only for `dependabot` to use. `duplicate`, `good first issue` and `wontfix` are only for maintainers to use.
+The labels `dependencies` and `.NET` are only for `dependabot` to use. `duplicate`, `good first issue`. `invalid` and `wontfix` are only for maintainers to use.
 
 If you are not sure which label to use, you can just leave it blank or use the one you think fits better, don't be afraid to make a mistake!
