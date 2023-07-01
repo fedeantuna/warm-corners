@@ -39,6 +39,28 @@ function Expand-ReleaseZip {
 
     $InstallDirectory = Join-Path $env:APPDATA "WarmCorners"
     Expand-Archive $ReleaseZipFile -DestinationPath $InstallDirectory
+
+    $InstalledExe = Join-Path $InstallDirectory "WarmCorners.exe"
+
+    return $InstalledExe
+}
+
+function New-ShortcutIntoStartup {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [string]$SourceFilePath
+    )
+
+    $ShortcutPath = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup\WarmCorners.lnk"
+    
+    if ($PSCmdlet.ShouldProcess($Path, ("Setting content to '{0}'" -f $Content))) {
+        $WScriptObj = New-Object -ComObject ("WScript.Shell")
+        $Shortcut = $WscriptObj.CreateShortcut($ShortcutPath)
+        $Shortcut.TargetPath = $SourceFilePath
+        $shortcut.Save()
+    } else {
+        Write-Output("Creating shortcut for `"" + $SourceFilePath + "`" in `"" + $ShortcutPath + "`"")
+    }
 }
 
 function Remove-DownloadedFile {
@@ -51,5 +73,6 @@ function Remove-DownloadedFile {
 }
 
 $ReleaseZipFile = Get-ReleaseFromGitHub
-Expand-ReleaseZip $ReleaseZipFile
+$ExeFile = Expand-ReleaseZip $ReleaseZipFile
+New-ShortcutIntoStartup $ExeFile
 Remove-DownloadedFile $ReleaseZipFile
