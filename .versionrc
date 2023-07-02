@@ -1,0 +1,8 @@
+{
+    "bumpFiles": [
+        {
+            "filename": "src/WarmCorners.Service/WarmCorners.Service.csproj",
+            "updater": "standard-version-updater.js"
+        }
+    ]
+}
