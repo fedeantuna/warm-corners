@@ -5,12 +5,12 @@ module.exports.readVersion = (contents) => {
     .split('<')[0];
 
     return versionNumber;
-}
+};
 
 module.exports.writeVersion = function (contents, version) {
     const updatedContents = contents
-        .replace(/<AssemblyVersion>*.*.*<\/AssemblyVersion>/g,
+        .replace(/<AssemblyVersion>*\.*\.*<\/AssemblyVersion>/g,
             `<AssemblyVersion>${version}</AssemblyVersion>`);
 
     return updatedContents;
-}
+};
