@@ -1,6 +1,0 @@
-{
-  "devDependencies": {
-    "remark": "^14.0.3",
-    "standard-version": "^9.5.0"
-  }
-}
