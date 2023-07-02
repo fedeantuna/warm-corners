@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-WarmCorners.Service-71CDDB04-894D-4535-BBF1-4C1660BF9E89</UserSecretsId>
         <AssemblyName>WarmCorners</AssemblyName>
-        <AssemblyVersion>0.1.0</AssemblyVersion>
+        <AssemblyVersion>0.1.1</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
