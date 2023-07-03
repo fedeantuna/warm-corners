@@ -52,11 +52,13 @@ function New-ShortcutIntoStartup {
     )
 
     $ShortcutPath = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup\WarmCorners.lnk"
+    $SourceDirectoryPath = Split-Path -Parent $SourceFilePath
     
     if ($PSCmdlet.ShouldProcess($Path, ("Setting content to '{0}'" -f $Content))) {
         $WScriptObj = New-Object -ComObject ("WScript.Shell")
         $Shortcut = $WscriptObj.CreateShortcut($ShortcutPath)
-        $Shortcut.TargetPath = $SourceFilePath
+        $Shortcut.TargetPath = "$SourceFilePath"
+        $Shortcut.WorkingDirectory = "$SourceDirectoryPath"
         $shortcut.Save()
     } else {
         Write-Output("Creating shortcut for `"" + $SourceFilePath + "`" in `"" + $ShortcutPath + "`"")
