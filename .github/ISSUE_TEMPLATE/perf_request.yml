@@ -1,9 +1,8 @@
 name: ⏱️ Performance request
-about: Suggest an idea to improve performance
+description: Suggest an idea to improve performance
 title: 'perf: '
 labels:
   - perf
-assignees:
 body:
   - id: description
     type: textarea

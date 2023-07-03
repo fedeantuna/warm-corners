@@ -1,9 +1,8 @@
 name: 🪛 Refactor request
-about: Suggest an idea to improve code quality
+description: Suggest an idea to improve code quality
 title: 'refactor: '
 labels:
   - refactor
-assignees:
 body:
   - id: description
     type: textarea

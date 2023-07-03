@@ -1,9 +1,8 @@
 name: 🧪 Test request
-about: Suggest an idea to add or improve a test
+description: Suggest an idea to add or improve a test
 title: 'test: '
 labels:
   - test
-assignees:
 body:
   - id: description
     type: textarea

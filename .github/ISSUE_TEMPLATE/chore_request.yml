@@ -1,9 +1,8 @@
 name: 🔧 Chore request
-about: Suggest an idea to add or improve a generic concern
+description: Suggest an idea to add or improve a generic concern
 title: 'chore: '
 labels:
   - chore
-assignees:
 body:
   - id: description
     type: textarea
