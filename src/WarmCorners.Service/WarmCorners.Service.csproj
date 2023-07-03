@@ -7,6 +7,9 @@
         <UserSecretsId>dotnet-WarmCorners.Service-71CDDB04-894D-4535-BBF1-4C1660BF9E89</UserSecretsId>
         <AssemblyName>WarmCorners</AssemblyName>
         <AssemblyVersion>0.1.1</AssemblyVersion>
+        <Authors>Federico Antuña</Authors>
+        <Company>WarmCorners</Company>
+        <Description>Configure triggers for when you move your mouse cursor over the screen corners</Description>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
