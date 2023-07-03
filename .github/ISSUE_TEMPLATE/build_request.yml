@@ -1,9 +1,8 @@
 name: 🔨 Build request
-about: Suggest an idea to add or improve how the solution is built
+description: Suggest an idea to add or improve how the solution is built
 title: 'build: '
 labels:
   - build
-assignees:
 body:
   - id: description
     type: textarea

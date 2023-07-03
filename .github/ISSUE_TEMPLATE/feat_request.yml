@@ -1,9 +1,8 @@
 name: 📘 Feature request
-about: Suggest an idea to add or improve a feature
+description: Suggest an idea to add or improve a feature
 title: 'feat: '
 labels:
   - feat
-assignees:
 body:
   - id: description
     type: textarea

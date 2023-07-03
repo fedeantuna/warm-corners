@@ -1,9 +1,8 @@
 name: ♾️ CI request
-about: Suggest an idea to add or improve CI configuration or scripts
+description: Suggest an idea to add or improve CI configuration or scripts
 title: 'ci: '
 labels:
   - ci
-assignees:
 body:
   - id: description
     type: textarea

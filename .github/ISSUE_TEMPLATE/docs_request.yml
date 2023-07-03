@@ -1,9 +1,8 @@
 name: 📄 Documentation request
-about: Suggest an idea to add or improve documentation
+description: Suggest an idea to add or improve documentation
 title: 'docs: '
 labels:
   - docs
-assignees:
 body:
   - id: description
     type: textarea
