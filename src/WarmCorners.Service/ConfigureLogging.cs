@@ -22,9 +22,10 @@ public static class ConfigureLogging
         if (context.IsDevelopment())
             loggerConfiguration.MinimumLevel.Debug();
 
+        var logFile = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WarmCorners", "wc_.log");
         var logger = loggerConfiguration
             .WriteTo.Console(theme: AnsiConsoleTheme.Code)
-            .WriteTo.File(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), rollingInterval: RollingInterval.Month)
+            .WriteTo.File(logFile, rollingInterval: RollingInterval.Month)
             .CreateLogger();
 
         return logger;
