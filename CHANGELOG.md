@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/fedeantuna/warm-corners/compare/v0.1.1...v0.1.2) (2023-07-07)
+
+
+### Bug Fixes
+
+* Application now works when started from startup shortcut ([62893d6](https://github.com/fedeantuna/warm-corners/commit/62893d6af39cfb1dee3cb8f1a5b03eaf6e9461c6))
+* Console window no longer visible ([5ac06d8](https://github.com/fedeantuna/warm-corners/commit/5ac06d8029a394abb0d79ed3b83fadf6af330ad7))
+* Logs are now stored in the correct directory ([473c24a](https://github.com/fedeantuna/warm-corners/commit/473c24abf747b76afdc5aa5ab3b907f7d319e216))
+
 ### [0.1.1](https://github.com/fedeantuna/warm-corners/compare/v0.1.0...v0.1.1) (2023-07-02)
 
 ## 0.1.0 (2023-07-02)
