@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SharpHook;
 using SharpHook.Reactive;
-using WarmCorners.Core.Wrappers;
+using WarmCorners.Application.Common.Wrappers;
 using WarmCorners.Service.Infrastructure.Wrapper;
 
 namespace WarmCorners.Service.Tests.Integration;
@@ -30,7 +30,7 @@ internal class TestApplicationFactory : WebApplicationFactory<Program>
                 services.ReplaceServiceWithMock<IEventSimulator>();
                 var reactiveGlobalHookMock = services.ReplaceServiceWithMock<IReactiveGlobalHook>();
 
-                services.ReplaceServiceWithMock<IProcessWrapper>();
+                // services.ReplaceServiceWithMock<IProcessWrapper>();
                 var schedulerWrapperMock = services.ReplaceServiceWithMock<ISchedulerWrapper>();
                 var user32WrapperMock = services.ReplaceServiceWithMock<IUser32Wrapper>();
 

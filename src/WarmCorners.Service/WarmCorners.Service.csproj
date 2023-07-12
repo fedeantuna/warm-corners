@@ -26,15 +26,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\WarmCorners.Core\WarmCorners.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <InternalsVisibleTo Include="WarmCorners.Service.Tests.Integration" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Properties\PublishProfiles\win-x86.pubxml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WarmCorners.Application\WarmCorners.Application.csproj" />
     </ItemGroup>
 
 </Project>
