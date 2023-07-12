@@ -2,14 +2,14 @@
 
 public class TriggerConfiguration
 {
-    public List<CommandTriggerConfiguration> CommandTriggers { get; init; } = new();
+    public List<ShellTriggerConfiguration> CommandTriggers { get; init; } = new();
     public List<KeyCombinationTriggerConfiguration> KeyCombinationTriggers { get; init; } = new();
 }
 
-public class CommandTriggerConfiguration
+public class ShellTriggerConfiguration
 {
     public required string ScreenCorner { get; init; }
-    public required string Command { get; init; }
+    public required string ShellCommand { get; init; }
 }
 
 public class KeyCombinationTriggerConfiguration

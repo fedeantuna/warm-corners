@@ -1,8 +1,10 @@
 using System.Reactive.Linq;
+using MediatR;
 using Microsoft.Extensions.Options;
 using SharpHook.Reactive;
-using WarmCorners.Core.Services.Abstractions;
-using WarmCorners.Core.Wrappers;
+using WarmCorners.Application.Common.Wrappers;
+using WarmCorners.Application.KeyCombinationTriggers.Commands;
+using WarmCorners.Application.ShellTriggers.Commands;
 using WarmCorners.Service.Configurations;
 using WarmCorners.Service.Mappers;
 
@@ -10,23 +12,20 @@ namespace WarmCorners.Service.Workers;
 
 public class MainWorker : BackgroundService
 {
-    private readonly ICommandTriggerService _commandTriggerService;
-    private readonly IKeyCombinationTriggerService _keyCombinationTriggerService;
     private readonly IReactiveGlobalHook _reactiveGlobalHook;
     private readonly ISchedulerWrapper _schedulerWrapper;
+    private readonly ISender _sender;
     private readonly IOptionsMonitor<TriggerConfiguration> _triggerConfigurationMonitor;
 
-    public MainWorker(ICommandTriggerService commandTriggerService,
-        IKeyCombinationTriggerService keyCombinationService,
-        IOptionsMonitor<TriggerConfiguration> triggerConfigurationMonitor,
+    public MainWorker(IOptionsMonitor<TriggerConfiguration> triggerConfigurationMonitor,
         IReactiveGlobalHook reactiveGlobalHook,
-        ISchedulerWrapper schedulerWrapper)
+        ISchedulerWrapper schedulerWrapper,
+        ISender sender)
     {
-        this._commandTriggerService = commandTriggerService;
-        this._keyCombinationTriggerService = keyCombinationService;
         this._triggerConfigurationMonitor = triggerConfigurationMonitor;
         this._reactiveGlobalHook = reactiveGlobalHook;
         this._schedulerWrapper = schedulerWrapper;
+        this._sender = sender;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -35,19 +34,10 @@ public class MainWorker : BackgroundService
             .Throttle(TimeSpan.FromMilliseconds(100), this._schedulerWrapper.Default)
             .Subscribe(args =>
             {
-                var (x, y) = (args.Data.X, args.Data.Y);
+                var position = (args.Data.X, args.Data.Y);
 
-                var commandTriggers = this._triggerConfigurationMonitor
-                    .CurrentValue
-                    .CommandTriggers
-                    .ToCommandTriggers();
-                this._commandTriggerService.ProcessCommandTrigger(commandTriggers, x, y);
-
-                var keyCombinationTriggers = this._triggerConfigurationMonitor
-                    .CurrentValue
-                    .KeyCombinationTriggers
-                    .ToKeyCombinationTriggers();
-                this._keyCombinationTriggerService.ProcessKeyCombinationTrigger(keyCombinationTriggers, x, y);
+                this.SendShellTriggers(position, stoppingToken);
+                this.SendKeyCombinationTriggers(position, stoppingToken);
             }, stoppingToken);
 
         await this._reactiveGlobalHook.RunAsync();
@@ -58,5 +48,58 @@ public class MainWorker : BackgroundService
         this._reactiveGlobalHook.Dispose();
 
         return base.StopAsync(cancellationToken);
+    }
+
+    private void SendShellTriggers((short x, short y) position, CancellationToken cancellationToken)
+    {
+        var shellTriggerConfigurations = this._triggerConfigurationMonitor
+            .CurrentValue
+            .CommandTriggers;
+
+        foreach (var commandTriggerConfiguration in shellTriggerConfigurations)
+        {
+            var screenCorner = commandTriggerConfiguration.ScreenCorner.ToScreenCorner();
+
+            if (!screenCorner.HasValue)
+                break;
+
+            var processShellTriggerCommand = new ProcessShellTriggerCommand
+            {
+                ScreenCorner = commandTriggerConfiguration.ScreenCorner.ToScreenCorner()!.Value,
+                ShellCommand = commandTriggerConfiguration.ShellCommand,
+                Position = position
+            };
+
+            this._sender.Send(processShellTriggerCommand, cancellationToken);
+        }
+    }
+
+    private void SendKeyCombinationTriggers((short x, short y) position, CancellationToken cancellationToken)
+    {
+        var keyCombinationTriggerConfigurations = this._triggerConfigurationMonitor
+            .CurrentValue
+            .KeyCombinationTriggers;
+
+        foreach (var keyCombinationTriggerConfiguration in keyCombinationTriggerConfigurations)
+        {
+            var screenCorner = keyCombinationTriggerConfiguration.ScreenCorner.ToScreenCorner();
+
+            if (!screenCorner.HasValue)
+                break;
+
+            var keyCombination = keyCombinationTriggerConfiguration.KeyCombination.ToKeyCombinationKeyCodes();
+
+            if (!keyCombination.Any())
+                break;
+
+            var processShellTriggerCommand = new ProcessKeyCombinationTriggerCommand
+            {
+                ScreenCorner = keyCombinationTriggerConfiguration.ScreenCorner.ToScreenCorner()!.Value,
+                KeyCombination = keyCombination,
+                Position = position
+            };
+
+            this._sender.Send(processShellTriggerCommand, cancellationToken);
+        }
     }
 }

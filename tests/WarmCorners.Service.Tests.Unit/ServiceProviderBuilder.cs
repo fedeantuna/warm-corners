@@ -1,13 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Serilog;
 using Serilog.Sinks.InMemory;
 using SharpHook.Reactive;
-using WarmCorners.Core.Services.Abstractions;
-using WarmCorners.Core.Wrappers;
-using WarmCorners.Service.Infrastructure.Wrapper;
+using WarmCorners.Application.Common.Wrappers;
 
 namespace WarmCorners.Service.Tests.Unit;
 
@@ -17,13 +16,9 @@ public class ServiceProviderBuilder
 
     public ServiceProviderBuilder()
     {
-        this._services.AddInfrastructureServices()
-            .AddPresentationServices(new ConfigurationBuilder().Build());
+        this._services.AddPresentationServices(new ConfigurationBuilder().Build());
 
-        this.AddCoreWrapperMocks();
-        this.ReplaceWrappersWithMocks();
-
-        this.AddCoreServiceMocks();
+        this.AddApplicationMocks();
 
         this.SetupReactiveGlobalHookMock();
         this.SetupInMemoryLogger();
@@ -31,26 +26,13 @@ public class ServiceProviderBuilder
 
     public IServiceProvider Build() => this._services.BuildServiceProvider();
 
-    private void AddCoreWrapperMocks()
+    private void AddApplicationMocks()
     {
+        var senderMock = new Mock<ISender>();
+        this._services.AddTransient(_ => senderMock.Object);
+
         var schedulerWrapperMock = new Mock<ISchedulerWrapper>();
-        this._services.AddSingleton(schedulerWrapperMock.Object);
-    }
-
-    private void ReplaceWrappersWithMocks()
-    {
-        var user32WrapperMock = this._services.ReplaceServiceWithMock<IUser32Wrapper>();
-        user32WrapperMock.Setup(u32W =>
-            u32W.GetScreenResolution()).Returns((Testing.TestDisplaySize.Width, Testing.TestDisplaySize.Height));
-    }
-
-    private void AddCoreServiceMocks()
-    {
-        var commandTriggerServiceMock = new Mock<ICommandTriggerService>();
-        this._services.AddSingleton(_ => commandTriggerServiceMock.Object);
-
-        var keyCombinationTriggerServiceMock = new Mock<IKeyCombinationTriggerService>();
-        this._services.AddSingleton(_ => keyCombinationTriggerServiceMock.Object);
+        this._services.AddSingleton(_ => schedulerWrapperMock.Object);
     }
 
     private void SetupReactiveGlobalHookMock() =>

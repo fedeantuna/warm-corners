@@ -1,5 +1,5 @@
-﻿using WarmCorners.Core.Common;
-using WarmCorners.Core.Services.Abstractions;
+﻿using WarmCorners.Application.Common.Services;
+using WarmCorners.Domain.Enums;
 using WarmCorners.Service.Infrastructure.Wrapper;
 
 namespace WarmCorners.Service.Infrastructure.Services;
@@ -11,7 +11,7 @@ public class ScreenService : IScreenService
     public ScreenService(IUser32Wrapper user32Wrapper) =>
         this._user32Wrapper = user32Wrapper;
 
-    public bool IsMouseCursorInCorner(ScreenCorner screenCorner, int x, int y)
+    public bool IsMouseCursorInCorner(ScreenCorner screenCorner, short x, short y)
     {
         var (width, height) = this._user32Wrapper.GetScreenResolution();
 

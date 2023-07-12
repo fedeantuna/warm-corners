@@ -1,7 +1,5 @@
 ﻿using SharpHook.Reactive;
-using WarmCorners.Core.Services.Abstractions;
 using WarmCorners.Service.Configurations;
-using WarmCorners.Service.Infrastructure.Services;
 using WarmCorners.Service.Infrastructure.Wrapper;
 using WarmCorners.Service.Workers;
 
@@ -20,8 +18,6 @@ public static class ConfigureServices
 
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
-        services.AddSingleton<IScreenService, ScreenService>();
-
         services.AddInfrastructureWrappers();
 
         return services;
