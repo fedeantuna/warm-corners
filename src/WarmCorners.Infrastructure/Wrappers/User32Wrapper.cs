@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-namespace WarmCorners.Service.Infrastructure.Wrapper;
+namespace WarmCorners.Infrastructure.Wrappers;
 
 public interface IUser32Wrapper
 {

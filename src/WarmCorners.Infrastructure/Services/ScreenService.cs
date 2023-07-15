@@ -1,8 +1,8 @@
 ﻿using WarmCorners.Application.Common.Services;
 using WarmCorners.Domain.Enums;
-using WarmCorners.Service.Infrastructure.Wrapper;
+using WarmCorners.Infrastructure.Wrappers;
 
-namespace WarmCorners.Service.Infrastructure.Services;
+namespace WarmCorners.Infrastructure.Services;
 
 public class ScreenService : IScreenService
 {

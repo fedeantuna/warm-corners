@@ -7,6 +7,7 @@ using Serilog;
 using Serilog.Sinks.InMemory;
 using SharpHook;
 using WarmCorners.Application.Common.Services;
+using WarmCorners.Application.Common.Wrappers;
 using WarmCorners.Domain.Enums;
 
 namespace WarmCorners.Application.Tests.Unit;
@@ -24,7 +25,7 @@ public class ServiceProviderBuilder
         this.ReplaceServicesWithMocks();
 
         this.SetupInMemoryLogger();
-        this.AddPresentationServiceMocks();
+        this.AddInfrastructureWrapperMocks();
         this.AddInfrastructureServiceMocks();
     }
 
@@ -37,7 +38,7 @@ public class ServiceProviderBuilder
         cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
     });
 
-    private void ReplaceServicesWithMocks() => this._services.ReplaceServiceWithMock<IEventSimulator>();
+    private void ReplaceServicesWithMocks() => this._services.ReplaceServiceWithMock<IEventSimulator>(ServiceLifetime.Singleton);
 
     private void SetupInMemoryLogger() =>
         this._services.AddLogging(builder =>
@@ -51,10 +52,6 @@ public class ServiceProviderBuilder
             builder.AddSerilog(logger);
         });
 
-    private void AddPresentationServiceMocks()
-    {
-    }
-
     private void AddInfrastructureServiceMocks()
     {
         var screenServiceMock = new Mock<IScreenService>();
@@ -62,20 +59,24 @@ public class ServiceProviderBuilder
                 ss.IsMouseCursorInCorner(ScreenCorner.TopLeft, Testing.TopLeftCorner.X, Testing.TopLeftCorner.Y))
             .Returns(true);
         this._services.AddTransient(_ => screenServiceMock.Object);
-
-        var shellServiceMock = new Mock<IShellService>();
-        this._services.AddTransient(_ => shellServiceMock.Object);
+    }
+    
+    private void AddInfrastructureWrapperMocks()
+    {
+        var processWrapperMock = new Mock<IProcessWrapper>();
+        this._services.AddTransient(_ => processWrapperMock.Object);
     }
 }
 
 public static class ServiceCollectionExtensions
 {
-    public static void ReplaceServiceWithMock<TIService>(this IServiceCollection services)
-        where TIService : class
+    public static void ReplaceServiceWithMock<TService>(this IServiceCollection services, ServiceLifetime serviceLifetime)
+        where TService : class
     {
-        var service = services.Single(sd => sd.ServiceType == typeof(TIService));
+        var service = services.Single(sd => sd.ServiceType == typeof(TService));
         services.Remove(service);
-        var replace = new Mock<TIService>();
-        services.AddSingleton(_ => replace.Object);
+        var replace = new Mock<TService>();
+        var serviceDescriptor = new ServiceDescriptor(typeof(TService), _ => replace.Object, serviceLifetime);
+        services.Add(serviceDescriptor);
     }
 }

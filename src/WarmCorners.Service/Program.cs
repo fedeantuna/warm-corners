@@ -1,4 +1,5 @@
 using WarmCorners.Application;
+using WarmCorners.Infrastructure;
 using WarmCorners.Service;
 
 var host = Host.CreateDefaultBuilder(args)

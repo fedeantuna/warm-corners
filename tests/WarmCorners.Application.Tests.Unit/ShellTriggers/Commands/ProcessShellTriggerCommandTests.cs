@@ -4,7 +4,7 @@ using Moq;
 using Serilog.Events;
 using Serilog.Sinks.InMemory;
 using Serilog.Sinks.InMemory.Assertions;
-using WarmCorners.Application.Common.Services;
+using WarmCorners.Application.Common.Wrappers;
 using WarmCorners.Application.ShellTriggers.Commands;
 using WarmCorners.Domain.Enums;
 
@@ -13,7 +13,7 @@ namespace WarmCorners.Application.Tests.Unit.ShellTriggers.Commands;
 public class ProcessShellTriggerCommandTests
 {
     private readonly ISender _sender;
-    private readonly Mock<IShellService> _shellServiceMock;
+    private readonly Mock<IProcessWrapper> _processWrapperMock;
 
     public ProcessShellTriggerCommandTests()
     {
@@ -21,8 +21,8 @@ public class ProcessShellTriggerCommandTests
 
         this._sender = provider.GetRequiredService<ISender>();
 
-        var shellService = provider.GetRequiredService<IShellService>();
-        this._shellServiceMock = Mock.Get(shellService);
+        var processWrapper = provider.GetRequiredService<IProcessWrapper>();
+        this._processWrapperMock = Mock.Get(processWrapper);
     }
 
     [Fact]
@@ -35,6 +35,8 @@ public class ProcessShellTriggerCommandTests
             ShellCommand = Testing.SomeShellCommand,
             Position = Testing.TopLeftCorner
         };
+        
+        this._processWrapperMock.Setup(pw => pw.Start()).Returns(true);
 
         // Act
         await this._sender.Send(processShellTriggerCommand);
@@ -44,6 +46,28 @@ public class ProcessShellTriggerCommandTests
             .Should()
             .HaveMessage(ProcessShellTriggerCommandHandler.ExecutedShellCommandLogMessageTemplate).Once()
             .WithLevel(LogEventLevel.Information)
+            .WithProperty("ShellCommand").WithValue(Testing.SomeShellCommand);
+    }
+    
+    [Fact]
+    public async Task ProcessShellTriggerCommandHandler_LogsWhenACommandHasNotBeenExecutedCorrectly()
+    {
+        // Arrange
+        var processShellTriggerCommand = new ProcessShellTriggerCommand
+        {
+            ScreenCorner = ScreenCorner.TopLeft,
+            ShellCommand = Testing.SomeShellCommand,
+            Position = Testing.TopLeftCorner
+        };
+        
+        // Act
+        await this._sender.Send(processShellTriggerCommand);
+
+        // Assert
+        InMemorySink.Instance
+            .Should()
+            .HaveMessage(ProcessShellTriggerCommandHandler.ErrorExecutingShellCommandLogMessageTemplate).Once()
+            .WithLevel(LogEventLevel.Error)
             .WithProperty("ShellCommand").WithValue(Testing.SomeShellCommand);
     }
 
@@ -57,12 +81,14 @@ public class ProcessShellTriggerCommandTests
             ShellCommand = Testing.SomeShellCommand,
             Position = Testing.TopLeftCorner
         };
+        
+        this._processWrapperMock.Setup(pw => pw.Start()).Returns(true);
 
         // Act
         await this._sender.Send(processShellTriggerCommand);
 
         // Assert
-        this._shellServiceMock.Verify(ss => ss.Run(Testing.SomeShellCommand), Times.Once);
+        this._processWrapperMock.Verify(ss => ss.Start(), Times.Once);
     }
 
     [Fact]
@@ -80,6 +106,6 @@ public class ProcessShellTriggerCommandTests
         await this._sender.Send(processShellTriggerCommand);
 
         // Assert
-        this._shellServiceMock.Verify(ss => ss.Run(Testing.SomeShellCommand), Times.Never);
+        this._processWrapperMock.Verify(ss => ss.Start(), Times.Never);
     }
 }
