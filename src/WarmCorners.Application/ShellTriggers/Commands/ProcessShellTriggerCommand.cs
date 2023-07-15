@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using WarmCorners.Application.Common.Services;
+using WarmCorners.Application.Common.Wrappers;
 using WarmCorners.Domain.Enums;
 
 namespace WarmCorners.Application.ShellTriggers.Commands;
@@ -15,30 +17,40 @@ public class ProcessShellTriggerCommand : IRequest
 public class ProcessShellTriggerCommandHandler : IRequestHandler<ProcessShellTriggerCommand>
 {
     internal const string ExecutedShellCommandLogMessageTemplate = "Executed {ShellCommand}";
-
+    internal const string ErrorExecutingShellCommandLogMessageTemplate = "Error executing {ShellCommand}";
+    
     private readonly ILogger<ProcessShellTriggerCommandHandler> _logger;
+    private readonly IProcessWrapper _processWrapper;
     private readonly IScreenService _screenService;
-    private readonly IShellService _shellService;
 
     public ProcessShellTriggerCommandHandler(ILogger<ProcessShellTriggerCommandHandler> logger,
-        IShellService shellService,
+        IProcessWrapper processWrapper,
         IScreenService screenService)
     {
         this._logger = logger;
-        this._shellService = shellService;
+        this._processWrapper = processWrapper;
         this._screenService = screenService;
     }
 
-    public async Task Handle(ProcessShellTriggerCommand request, CancellationToken cancellationToken)
+    public Task Handle(ProcessShellTriggerCommand request, CancellationToken cancellationToken)
     {
         var shouldTriggerCommand =
             this._screenService.IsMouseCursorInCorner(request.ScreenCorner, request.Position.X, request.Position.Y);
 
         if (!shouldTriggerCommand)
-            return;
+            return Task.CompletedTask;
 
-        await this._shellService.Run(request.ShellCommand);
+        this._processWrapper.SetStartInfo(new ProcessStartInfo("cmd", $"/c {request.ShellCommand}")
+        {
+            CreateNoWindow = true
+        });
+        var commandExecutedSuccessfully = this._processWrapper.Start();
 
-        this._logger.LogInformation(ExecutedShellCommandLogMessageTemplate, request.ShellCommand);
+        if (commandExecutedSuccessfully)
+            this._logger.LogInformation(ExecutedShellCommandLogMessageTemplate, request.ShellCommand);
+        else
+            this._logger.LogError(ErrorExecutingShellCommandLogMessageTemplate, request.ShellCommand);
+        
+        return Task.CompletedTask;
     }
 }

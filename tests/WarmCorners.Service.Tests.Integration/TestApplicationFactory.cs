@@ -9,7 +9,6 @@ using Moq;
 using SharpHook;
 using SharpHook.Reactive;
 using WarmCorners.Application.Common.Wrappers;
-using WarmCorners.Service.Infrastructure.Wrapper;
 
 namespace WarmCorners.Service.Tests.Integration;
 

@@ -35,6 +35,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WarmCorners.Application\WarmCorners.Application.csproj" />
+      <ProjectReference Include="..\WarmCorners.Infrastructure\WarmCorners.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
