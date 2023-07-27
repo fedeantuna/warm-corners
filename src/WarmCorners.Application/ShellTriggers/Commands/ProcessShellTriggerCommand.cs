@@ -18,7 +18,7 @@ public class ProcessShellTriggerCommandHandler : IRequestHandler<ProcessShellTri
 {
     internal const string ExecutedShellCommandLogMessageTemplate = "Executed {ShellCommand}";
     internal const string ErrorExecutingShellCommandLogMessageTemplate = "Error executing {ShellCommand}";
-    
+
     private readonly ILogger<ProcessShellTriggerCommandHandler> _logger;
     private readonly IProcessWrapper _processWrapper;
     private readonly IScreenService _screenService;
@@ -50,7 +50,7 @@ public class ProcessShellTriggerCommandHandler : IRequestHandler<ProcessShellTri
             this._logger.LogInformation(ExecutedShellCommandLogMessageTemplate, request.ShellCommand);
         else
             this._logger.LogError(ErrorExecutingShellCommandLogMessageTemplate, request.ShellCommand);
-        
+
         return Task.CompletedTask;
     }
 }

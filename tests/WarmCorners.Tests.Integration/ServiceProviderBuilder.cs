@@ -3,10 +3,13 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Serilog;
 using Serilog.Sinks.InMemory;
+using SharpHook;
+using WarmCorners.Application;
 using WarmCorners.Application.Common.Wrappers;
+using WarmCorners.Infrastructure;
 using WarmCorners.Infrastructure.Wrappers;
 
-namespace WarmCorners.Infrastructure.Tests.Unit;
+namespace WarmCorners.Tests.Integration;
 
 public class ServiceProviderBuilder
 {
@@ -14,7 +17,8 @@ public class ServiceProviderBuilder
 
     public ServiceProviderBuilder()
     {
-        this._services.AddInfrastructureServices();
+        this._services.AddApplicationServices()
+            .AddInfrastructureServices();
 
         this.ReplaceWrappersWithMocks();
 
@@ -27,7 +31,10 @@ public class ServiceProviderBuilder
     {
         this._services.ReplaceServiceWithMock<IDateTimeOffsetWrapper>(ServiceLifetime.Transient);
         this._services.ReplaceServiceWithMock<IProcessWrapper>(ServiceLifetime.Transient);
-        this._services.ReplaceServiceWithMock<ISchedulerWrapper>(ServiceLifetime.Transient);
+        this._services.ReplaceServiceWithMock<IEventSimulator>(ServiceLifetime.Singleton);
+
+        var schedulerWrapperMock = this._services.ReplaceServiceWithMock<ISchedulerWrapper>(ServiceLifetime.Transient);
+        schedulerWrapperMock.SetupGet(sw => sw.Default).Returns(Testing.TestScheduler);
 
         var user32WrapperMock = this._services.ReplaceServiceWithMock<IUser32Wrapper>(ServiceLifetime.Transient);
         user32WrapperMock.Setup(u32W =>

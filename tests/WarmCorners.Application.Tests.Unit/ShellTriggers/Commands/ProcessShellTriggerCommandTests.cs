@@ -12,8 +12,8 @@ namespace WarmCorners.Application.Tests.Unit.ShellTriggers.Commands;
 
 public class ProcessShellTriggerCommandTests
 {
-    private readonly ISender _sender;
     private readonly Mock<IProcessWrapper> _processWrapperMock;
+    private readonly ISender _sender;
 
     public ProcessShellTriggerCommandTests()
     {
@@ -35,7 +35,7 @@ public class ProcessShellTriggerCommandTests
             ShellCommand = Testing.SomeShellCommand,
             Position = Testing.TopLeftCorner
         };
-        
+
         this._processWrapperMock.Setup(pw => pw.Start()).Returns(true);
 
         // Act
@@ -48,7 +48,7 @@ public class ProcessShellTriggerCommandTests
             .WithLevel(LogEventLevel.Information)
             .WithProperty("ShellCommand").WithValue(Testing.SomeShellCommand);
     }
-    
+
     [Fact]
     public async Task ProcessShellTriggerCommandHandler_LogsWhenACommandHasNotBeenExecutedCorrectly()
     {
@@ -59,7 +59,7 @@ public class ProcessShellTriggerCommandTests
             ShellCommand = Testing.SomeShellCommand,
             Position = Testing.TopLeftCorner
         };
-        
+
         // Act
         await this._sender.Send(processShellTriggerCommand);
 
@@ -81,7 +81,7 @@ public class ProcessShellTriggerCommandTests
             ShellCommand = Testing.SomeShellCommand,
             Position = Testing.TopLeftCorner
         };
-        
+
         this._processWrapperMock.Setup(pw => pw.Start()).Returns(true);
 
         // Act
