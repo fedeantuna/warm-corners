@@ -60,7 +60,7 @@ public class ServiceProviderBuilder
             .Returns(true);
         this._services.AddTransient(_ => screenServiceMock.Object);
     }
-    
+
     private void AddInfrastructureWrapperMocks()
     {
         var processWrapperMock = new Mock<IProcessWrapper>();

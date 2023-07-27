@@ -11,7 +11,7 @@ public static class ConfigureServices
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddSingleton<IScreenService, ScreenService>();
-        
+
         services.AddWrappers();
 
         return services;

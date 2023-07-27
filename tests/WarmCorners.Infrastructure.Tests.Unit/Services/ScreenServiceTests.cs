@@ -77,7 +77,8 @@ public class ScreenServiceTests
     [MemberData(nameof(TopRightCornerTestCases))]
     [MemberData(nameof(BottomRightCornerTestCases))]
     [MemberData(nameof(BottomLeftCornerTestCases))]
-    public void IsMouseCursorInCorner_GetsTheCurrentCornerThresholdsForTheCurrentScreenResolution(ScreenCorner screenCorner, short x, short y,
+    public void IsMouseCursorInCorner_GetsTheCurrentCornerThresholdsForTheCurrentScreenResolution(ScreenCorner screenCorner, short x,
+        short y,
         bool expectedResult)
     {
         // Act
