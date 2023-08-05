@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/fedeantuna/warm-corners/compare/v0.1.2...v0.1.3) (2023-08-05)
+
+
+### Bug Fixes
+
+* Console window is visible ([81f44e7](https://github.com/fedeantuna/warm-corners/commit/81f44e7327918a8d1fdafaa5b45293f5fa61897c))
+
 ### [0.1.2](https://github.com/fedeantuna/warm-corners/compare/v0.1.1...v0.1.2) (2023-07-07)
 
 
