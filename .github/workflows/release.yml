@@ -30,10 +30,10 @@ jobs:
 
       - name: Zip release files
         run: |
-          zip -j release/warm-corners_x64.zip release/win-x64/lw/WarmCorners.exe release/win-x64/lw/appsettings.json
-          zip -j release/warm-corners_x64_sc.zip release/win-x64/sc/WarmCorners.exe release/win-x64/sc/appsettings.json
-          zip -j release/warm-corners_x86.zip release/win-x86/lw/WarmCorners.exe release/win-x86/lw/appsettings.json
-          zip -j release/warm-corners_x86_sc.zip release/win-x86/sc/WarmCorners.exe release/win-x86/sc/appsettings.json
+          Compress-Archive -Path release\win-x64\lw\* -DestinationPath release\warm-corners_x64.zip
+          Compress-Archive -Path release\win-x64\sc\* -DestinationPath release\warm-corners_x64_sc.zip
+          Compress-Archive -Path release\win-x86\lw\* -DestinationPath release\warm-corners_x86.zip
+          Compress-Archive -Path release\win-x86\sc\* -DestinationPath release\warm-corners_x86_sc.zip
 
       - name: Create release
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
