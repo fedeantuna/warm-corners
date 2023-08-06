@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using WarmCorners.Application.Common.Services;
@@ -14,6 +15,7 @@ public class ProcessShellTriggerCommand : IRequest
     public required (short X, short Y) Position { get; init; }
 }
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class ProcessShellTriggerCommandHandler : IRequestHandler<ProcessShellTriggerCommand>
 {
     internal const string ExecutedShellCommandLogMessageTemplate = "Executed {ShellCommand}";
