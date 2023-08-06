@@ -54,7 +54,7 @@ public class MainWorker : BackgroundService
     {
         var shellTriggerConfigurations = this._triggerConfigurationMonitor
             .CurrentValue
-            .CommandTriggers;
+            .ShellTriggers;
 
         foreach (var commandTriggerConfiguration in shellTriggerConfigurations)
         {

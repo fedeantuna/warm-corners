@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SharpHook;
@@ -14,6 +15,7 @@ public class ProcessKeyCombinationTriggerCommand : IRequest
     public required (short X, short Y) Position { get; init; }
 }
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class ProcessKeyCombinationTriggerCommandHandler : IRequestHandler<ProcessKeyCombinationTriggerCommand>
 {
     internal const string ExecutedKeyCombinationLogMessageTemplate = "Executed {KeyCombination}";

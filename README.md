@@ -32,37 +32,7 @@ WarmCorners detects where your mouse cursor is in real time. If it's over a corn
 
 The way to configure triggers is using the `appsettings.json` file. If you installed the software using the installation script, then the file should be located under `%APPDATA%\WarmCorners\`.
 
-You can configure `Command Triggers` and `Key Combination Triggers`, even both at the same time. By default there will be a single `Key Combination Trigger`.
-
-### Command Triggers
-
-Command Triggers are triggers that when activated will execute a command. These triggers are configured as items in a list called `CommandTriggers` inside the `Triggers` key. Lets say you want to execute the notepad command when you move your mouse cursor over the top right corner, you will need to have the following in your `appsettings.json`:
-
-```json
-{
-  "Triggers": {
-    "CommandTriggers": [
-      {
-        "ScreenCorner": "TopRight",
-        "Command": "notepad"
-      }
-    ]
-  }
-}
-```
-
-The possible values for the `ScreenCorner` are:
-
-*   TopLeft
-*   TopRight
-*   BottomRight
-*   BottomLeft
-
-These are all case insensitive, so you can use whatever casing you like the most.
-
-The possible values for the `Command` are any command that you can run using `cmd`.
-
-If you want to add more tha one Command Trigger, just add another entry to that list following the same rules.
+You can configure `Key Combination Triggers` and `Shell Triggers`, even both at the same time. By default there will be a single `Key Combination Trigger`.
 
 ### Key Combination Triggers
 
@@ -267,6 +237,36 @@ Valid Keys for `KeyCombination`:
 *   SunCopy
 *   SunInsert
 *   SunCut
+
+### Shell Triggers
+
+Shell Triggers are triggers that when activated will execute a command. These triggers are configured as items in a list called `ShellTriggers` inside the `Triggers` key. Lets say you want to execute the notepad command when you move your mouse cursor over the top right corner, you will need to have the following in your `appsettings.json`:
+
+```json
+{
+  "Triggers": {
+    "ShellTriggers": [
+      {
+        "ScreenCorner": "TopRight",
+        "ShellCommand": "notepad"
+      }
+    ]
+  }
+}
+```
+
+The possible values for the `ScreenCorner` are:
+
+*   TopLeft
+*   TopRight
+*   BottomRight
+*   BottomLeft
+
+These are all case insensitive, so you can use whatever casing you like the most.
+
+The possible values for the `ShellCommand` are any command that you can run using `cmd`.
+
+If you want to add more tha one Shell Trigger, just add another entry to that list following the same rules.
 
 ## Build from source
 
