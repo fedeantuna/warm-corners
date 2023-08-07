@@ -7,7 +7,8 @@ using Microsoft.Extensions.Logging;
 namespace WarmCorners.Application.KeyCombinationTriggers.Commands.TriggerKeyCombination;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
-public class TriggerKeyCombinationCommandValidationExceptionHandler : IRequestExceptionHandler<TriggerKeyCombinationCommand, Unit, ValidationException>
+public class TriggerKeyCombinationCommandValidationExceptionHandler : IRequestExceptionHandler<TriggerKeyCombinationCommand, Unit,
+    ValidationException>
 {
     internal const string RequestValidationExceptionLogMessageTemplate = "Request: {RequestName} {@Request} failed {@Errors}";
 

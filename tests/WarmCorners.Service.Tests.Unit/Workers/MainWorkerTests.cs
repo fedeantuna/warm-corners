@@ -71,9 +71,9 @@ public class MainWorkerTests
         // Assert
         this._senderMock
             .Verify(s =>
-                s.Send(It.Is<IBaseRequest>(br =>
-                    br.GetType() == typeof(TriggerKeyCombinationCommand)),
-                    It.IsAny<CancellationToken>()),
+                    s.Send(It.Is<IBaseRequest>(br =>
+                            br.GetType() == typeof(TriggerKeyCombinationCommand)),
+                        It.IsAny<CancellationToken>()),
                 Times.Once);
 
         cancellationTokenSource.Cancel();

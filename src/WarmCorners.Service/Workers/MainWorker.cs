@@ -14,10 +14,10 @@ namespace WarmCorners.Service.Workers;
 
 public class MainWorker : BackgroundService
 {
-    private readonly IOptionsMonitor<TriggerConfiguration> _triggerConfigurationMonitor;
     private readonly IReactiveGlobalHook _reactiveGlobalHook;
     private readonly IScreenService _screenService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IOptionsMonitor<TriggerConfiguration> _triggerConfigurationMonitor;
 
     public MainWorker(IOptionsMonitor<TriggerConfiguration> triggerConfigurationMonitor,
         IReactiveGlobalHook reactiveGlobalHook,
@@ -91,7 +91,8 @@ public class MainWorker : BackgroundService
                     cancellationToken);
             });
 
-    private void ProcessCommand(IBaseRequest command, ScreenCorner? screenCorner, (short X, short Y) position, CancellationToken cancellationToken)
+    private void ProcessCommand(IBaseRequest command, ScreenCorner? screenCorner, (short X, short Y) position,
+        CancellationToken cancellationToken)
     {
         var shouldTriggerCommand = screenCorner.HasValue
                                    && this._screenService.IsMouseCursorInCorner(screenCorner.Value, position.X, position.Y);
