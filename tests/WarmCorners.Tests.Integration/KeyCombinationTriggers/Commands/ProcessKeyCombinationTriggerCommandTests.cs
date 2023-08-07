@@ -3,8 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SharpHook;
 using SharpHook.Native;
-using WarmCorners.Application.KeyCombinationTriggers.Commands;
-using WarmCorners.Domain.Enums;
+using WarmCorners.Application.KeyCombinationTriggers.Commands.TriggerKeyCombination;
 
 namespace WarmCorners.Tests.Integration.KeyCombinationTriggers.Commands;
 
@@ -35,10 +34,8 @@ public class ProcessKeyCombinationTriggerCommandTests
         };
 
         // Act
-        await this._sender.Send(new ProcessKeyCombinationTriggerCommand
+        await this._sender.Send(new TriggerKeyCombinationCommand
         {
-            Position = (Testing.TopRightCorner.X, Testing.TopRightCorner.Y),
-            ScreenCorner = ScreenCorner.TopRight,
             KeyCombination = expectedKeyCombination
         });
 

@@ -9,7 +9,7 @@ public class UnhandledExceptionBehavior<TRequest, TException> : IRequestExceptio
     where TRequest : notnull
     where TException : Exception
 {
-    internal const string LogMessageTemplate = "Request: Unhandled Exception for Request {RequestName} {@Request}";
+    internal const string UnhandledExceptionLogMessageTemplate = "Request: Unhandled Exception for Request {RequestName} {@Request}";
 
     private readonly ILogger _logger;
 
@@ -22,7 +22,7 @@ public class UnhandledExceptionBehavior<TRequest, TException> : IRequestExceptio
         var requestName = typeof(TRequest).Name;
 
         this._logger.LogError(exception,
-            LogMessageTemplate,
+            UnhandledExceptionLogMessageTemplate,
             requestName, request);
 
         return Task.CompletedTask;

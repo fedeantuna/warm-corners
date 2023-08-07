@@ -31,7 +31,7 @@ public class LoggingBehaviorTests
         // Assert
         InMemorySink.Instance
             .Should()
-            .HaveMessage(LoggingBehavior<UnvalidatedPassingRequestFake>.LogMessageTemplate).Once()
+            .HaveMessage(LoggingBehavior<UnvalidatedPassingRequestFake>.RequestLogMessageTemplate).Once()
             .WithProperty("RequestName").WithValue(nameof(UnvalidatedPassingRequestFake))
             .And.WithProperty("Request").HavingADestructuredObject();
     }

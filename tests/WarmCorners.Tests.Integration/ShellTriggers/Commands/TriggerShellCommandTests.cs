@@ -3,12 +3,11 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using WarmCorners.Application.Common.Wrappers;
-using WarmCorners.Application.ShellTriggers.Commands;
-using WarmCorners.Domain.Enums;
+using WarmCorners.Application.ShellTriggers.Commands.TriggerShell;
 
 namespace WarmCorners.Tests.Integration.ShellTriggers.Commands;
 
-public class ProcessShellTriggerCommandTests
+public class TriggerShellCommandTests
 {
     private Mock<IProcessWrapper> _processWrapperMock = null!;
     private ISender _sender = null!;
@@ -31,10 +30,8 @@ public class ProcessShellTriggerCommandTests
         const string expectedCommand = "notepad";
 
         // Act
-        await this._sender.Send(new ProcessShellTriggerCommand
+        await this._sender.Send(new TriggerShellCommand
         {
-            Position = (Testing.TopRightCorner.X, Testing.TopRightCorner.Y),
-            ScreenCorner = ScreenCorner.TopRight,
             ShellCommand = expectedCommand
         });
 
