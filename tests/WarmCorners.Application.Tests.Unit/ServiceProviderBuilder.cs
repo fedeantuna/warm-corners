@@ -9,6 +9,7 @@ using SharpHook;
 using WarmCorners.Application.Common.Services;
 using WarmCorners.Application.Common.Wrappers;
 using WarmCorners.Domain.Enums;
+using WarmCorners.Tests.Common;
 
 namespace WarmCorners.Application.Tests.Unit;
 
@@ -18,15 +19,16 @@ public class ServiceProviderBuilder
 
     public ServiceProviderBuilder()
     {
-        this._services.AddApplicationServices();
+        this._services.AddApplicationServices()
+            .SetupInMemoryLogger();
+
         this.AddFakeValidators();
         this.AddFakeMediatorRequests();
 
         this.ReplaceServicesWithMocks();
 
-        this.SetupInMemoryLogger();
-        this.AddInfrastructureWrapperMocks();
         this.AddInfrastructureServiceMocks();
+        this.AddInfrastructureWrapperMocks();
     }
 
     public IServiceProvider Build() => this._services.BuildServiceProvider();
@@ -39,18 +41,6 @@ public class ServiceProviderBuilder
     });
 
     private void ReplaceServicesWithMocks() => this._services.ReplaceServiceWithMock<IEventSimulator>(ServiceLifetime.Singleton);
-
-    private void SetupInMemoryLogger() =>
-        this._services.AddLogging(builder =>
-        {
-            builder.ClearProviders();
-
-            var logger = new LoggerConfiguration()
-                .WriteTo.InMemory()
-                .MinimumLevel.Verbose()
-                .CreateLogger();
-            builder.AddSerilog(logger);
-        });
 
     private void AddInfrastructureServiceMocks()
     {
@@ -65,18 +55,5 @@ public class ServiceProviderBuilder
     {
         var processWrapperMock = new Mock<IProcessWrapper>();
         this._services.AddTransient(_ => processWrapperMock.Object);
-    }
-}
-
-public static class ServiceCollectionExtensions
-{
-    public static void ReplaceServiceWithMock<TService>(this IServiceCollection services, ServiceLifetime serviceLifetime)
-        where TService : class
-    {
-        var service = services.Single(sd => sd.ServiceType == typeof(TService));
-        services.Remove(service);
-        var replace = new Mock<TService>();
-        var serviceDescriptor = new ServiceDescriptor(typeof(TService), _ => replace.Object, serviceLifetime);
-        services.Add(serviceDescriptor);
     }
 }
