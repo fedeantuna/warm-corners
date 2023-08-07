@@ -12,18 +12,7 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.ConfigureValidators();
-        services.ConfigureMediator();
-
-        services.AddSingleton<IEventSimulator, EventSimulator>();
-
-        return services;
-    }
-
-    private static void ConfigureValidators(this IServiceCollection services) =>
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-    private static void ConfigureMediator(this IServiceCollection services) =>
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
@@ -32,4 +21,9 @@ public static class ConfigureServices
 
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         });
+
+        services.AddSingleton<IEventSimulator, EventSimulator>();
+
+        return services;
+    }
 }

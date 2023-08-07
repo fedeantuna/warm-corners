@@ -8,6 +8,5 @@ public class ValidatedPassingRequestValidatorFake : AbstractValidator<ValidatedP
 {
     public ValidatedPassingRequestValidatorFake() =>
         this.RuleFor(fe => fe.SomeString)
-            .NotNull()
             .NotEmpty();
 }

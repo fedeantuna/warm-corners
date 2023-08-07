@@ -1,12 +1,17 @@
-﻿using MediatR;
+﻿using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Serilog;
 using Serilog.Sinks.InMemory;
 using SharpHook.Reactive;
+using WarmCorners.Application.Common.Services;
 using WarmCorners.Application.Common.Wrappers;
+using WarmCorners.Service.Configurations;
 
 namespace WarmCorners.Service.Tests.Unit;
 
@@ -19,6 +24,9 @@ public class ServiceProviderBuilder
         this._services.AddPresentationServices(new ConfigurationBuilder().Build());
 
         this.AddApplicationMocks();
+        this.AddInfrastructureMocks();
+
+        this.AddSettings();
 
         this.SetupReactiveGlobalHookMock();
         this.SetupInMemoryLogger();
@@ -30,13 +38,38 @@ public class ServiceProviderBuilder
     {
         var senderMock = new Mock<ISender>();
         this._services.AddTransient(_ => senderMock.Object);
-
-        var schedulerWrapperMock = new Mock<ISchedulerWrapper>();
-        this._services.AddSingleton(_ => schedulerWrapperMock.Object);
     }
 
-    private void SetupReactiveGlobalHookMock() =>
-        this._services.ReplaceServiceWithMock<IReactiveGlobalHook>(ServiceLifetime.Singleton);
+    private void AddInfrastructureMocks()
+    {
+        var screenServiceMock = new Mock<IScreenService>();
+        this._services.AddSingleton(_ => screenServiceMock.Object);
+
+        var schedulerWrapperMock = new Mock<ISchedulerWrapper>();
+        schedulerWrapperMock.Setup(sw => sw.Default).Returns(Testing.TestScheduler);
+        this._services.AddTransient(_ => schedulerWrapperMock.Object);
+    }
+
+    private void AddSettings()
+    {
+        var triggerConfigurationOptionsMonitor = Mock.Of<IOptionsMonitor<TriggerConfiguration>>(om =>
+            om.CurrentValue == Testing.TriggerConfiguration);
+        this._services.AddSingleton(_ => triggerConfigurationOptionsMonitor);
+    }
+
+    private void SetupReactiveGlobalHookMock()
+    {
+        var reactiveGlobalHookMock = this._services.ReplaceServiceWithMock<IReactiveGlobalHook>(ServiceLifetime.Singleton);
+        reactiveGlobalHookMock
+            .Setup(rgh => rgh.MouseMoved)
+            .Returns(Testing.TestMouseMoved);
+        reactiveGlobalHookMock
+            .Setup(rgh => rgh.RunAsync())
+            .Returns(new Subject<System.Reactive.Unit>().AsObservable());
+        reactiveGlobalHookMock
+            .Setup(rgh => rgh.Dispose())
+            .Callback(() => { });
+    }
 
     private void SetupInMemoryLogger() =>
         this._services.AddLogging(builder =>
@@ -53,7 +86,7 @@ public class ServiceProviderBuilder
 
 public static class ServiceCollectionExtensions
 {
-    public static void ReplaceServiceWithMock<TService>(this IServiceCollection services, ServiceLifetime serviceLifetime)
+    public static Mock<TService> ReplaceServiceWithMock<TService>(this IServiceCollection services, ServiceLifetime serviceLifetime)
         where TService : class
     {
         var service = services.Single(sd => sd.ServiceType == typeof(TService));
@@ -61,5 +94,7 @@ public static class ServiceCollectionExtensions
         var replace = new Mock<TService>();
         var serviceDescriptor = new ServiceDescriptor(typeof(TService), _ => replace.Object, serviceLifetime);
         services.Add(serviceDescriptor);
+
+        return replace;
     }
 }

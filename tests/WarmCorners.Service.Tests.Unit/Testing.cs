@@ -1,10 +1,51 @@
-﻿namespace WarmCorners.Service.Tests.Unit;
+﻿using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using Microsoft.Reactive.Testing;
+using SharpHook;
+using SharpHook.Native;
+using WarmCorners.Service.Configurations;
+
+namespace WarmCorners.Service.Tests.Unit;
 
 public static class Testing
 {
-    public static (int Width, int Height) TestDisplaySize => (1024, 768);
-    public static (int X, int Y) TopLeftCorner => (0, 0);
-    public static (int X, int Y) TopRightCorner => (TestDisplaySize.Width, 0);
-    public static (int X, int Y) BottomRightCorner => (TestDisplaySize.Width, TestDisplaySize.Height);
-    public static (int X, int Y) BottomLeftCorner => (0, TestDisplaySize.Height);
+    private static readonly Subject<MouseHookEventArgs> TestMouseMovedSubject = new();
+
+    public static IObservable<MouseHookEventArgs> TestMouseMoved { get; } = TestMouseMovedSubject.AsObservable();
+    public static TestScheduler TestScheduler { get; } = new();
+
+    public static void TriggerMouseEvent()
+    {
+        TestScheduler.Schedule(() =>
+            TestMouseMovedSubject.OnNext(new MouseHookEventArgs(new UioHookEvent
+            {
+                Mouse = new MouseEventData
+                {
+                    X = 0,
+                    Y = 0
+                }
+            })));
+        TestScheduler.Start();
+    }
+
+    public static TriggerConfiguration TriggerConfiguration => new()
+    {
+        KeyCombinationTriggers = new List<KeyCombinationTriggerConfiguration>
+        {
+            new()
+            {
+                ScreenCorner = "TopLeft",
+                KeyCombination = "LeftMeta+Tab"
+            }
+        },
+        ShellTriggers = new List<ShellTriggerConfiguration>
+        {
+            new()
+            {
+                ScreenCorner = "TopRight",
+                ShellCommand = "notepad"
+            }
+        }
+    };
 }

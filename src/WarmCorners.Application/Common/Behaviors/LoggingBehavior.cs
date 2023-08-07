@@ -8,7 +8,7 @@ namespace WarmCorners.Application.Common.Behaviors;
 public class LoggingBehavior<TRequest> : IRequestPreProcessor<TRequest>
     where TRequest : notnull
 {
-    internal const string LogMessageTemplate = "Request: {RequestName} {@Request}";
+    internal const string RequestLogMessageTemplate = "Request: {RequestName} {@Request}";
 
     private readonly ILogger _logger;
 
@@ -21,7 +21,7 @@ public class LoggingBehavior<TRequest> : IRequestPreProcessor<TRequest>
     {
         var requestName = typeof(TRequest).Name;
 
-        this._logger.LogInformation(LogMessageTemplate,
+        this._logger.LogInformation(RequestLogMessageTemplate,
             requestName, request);
 
         return Task.CompletedTask;

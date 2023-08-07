@@ -10,11 +10,8 @@ public static class ConfigureServices
     {
         services.AddSingleton<IReactiveGlobalHook, SimpleReactiveGlobalHook>();
 
-        services.AddConfigurations(configuration);
+        services.Configure<TriggerConfiguration>(configuration.GetSection("Triggers"));
 
         services.AddHostedService<MainWorker>();
     }
-
-    private static void AddConfigurations(this IServiceCollection services, IConfiguration configuration) =>
-        services.Configure<TriggerConfiguration>(configuration.GetSection("Triggers"));
 }

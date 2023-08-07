@@ -33,7 +33,7 @@ public class UnhandledExceptionBehaviorTests
         await act.Should().ThrowAsync<Exception>();
         InMemorySink.Instance
             .Should()
-            .HaveMessage(UnhandledExceptionBehavior<IRequest, Exception>.LogMessageTemplate).Once()
+            .HaveMessage(UnhandledExceptionBehavior<IRequest, Exception>.UnhandledExceptionLogMessageTemplate).Once()
             .WithProperty("RequestName").WithValue(nameof(FailingRequestFake))
             .And.WithProperty("Request").HavingADestructuredObject();
     }
