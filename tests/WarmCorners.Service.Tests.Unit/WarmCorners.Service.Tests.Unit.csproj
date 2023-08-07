@@ -32,6 +32,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\WarmCorners.Service\WarmCorners.Service.csproj" />
+      <ProjectReference Include="..\WarmCorners.Tests.Common\WarmCorners.Tests.Common.csproj" />
     </ItemGroup>
 
 </Project>
