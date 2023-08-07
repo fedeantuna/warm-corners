@@ -107,6 +107,5 @@ public class TriggerShellCommandTests
             .WithProperty("RequestName").WithValue(nameof(TriggerShellCommand))
             .And.WithProperty("Request").HavingADestructuredObject().WithProperty("ShellCommand").WithValue(shellCommand)
             .And.WithProperty("Errors");
-
     }
 }

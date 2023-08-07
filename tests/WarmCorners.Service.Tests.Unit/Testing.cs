@@ -15,20 +15,6 @@ public static class Testing
     public static IObservable<MouseHookEventArgs> TestMouseMoved { get; } = TestMouseMovedSubject.AsObservable();
     public static TestScheduler TestScheduler { get; } = new();
 
-    public static void TriggerMouseEvent()
-    {
-        TestScheduler.Schedule(() =>
-            TestMouseMovedSubject.OnNext(new MouseHookEventArgs(new UioHookEvent
-            {
-                Mouse = new MouseEventData
-                {
-                    X = 0,
-                    Y = 0
-                }
-            })));
-        TestScheduler.Start();
-    }
-
     public static TriggerConfiguration TriggerConfiguration => new()
     {
         KeyCombinationTriggers = new List<KeyCombinationTriggerConfiguration>
@@ -48,4 +34,18 @@ public static class Testing
             }
         }
     };
+
+    public static void TriggerMouseEvent()
+    {
+        TestScheduler.Schedule(() =>
+            TestMouseMovedSubject.OnNext(new MouseHookEventArgs(new UioHookEvent
+            {
+                Mouse = new MouseEventData
+                {
+                    X = 0,
+                    Y = 0
+                }
+            })));
+        TestScheduler.Start();
+    }
 }
