@@ -1,7 +1,9 @@
 ﻿using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using MediatR;
 using Microsoft.Reactive.Testing;
+using Moq;
 using SharpHook;
 using SharpHook.Native;
 using WarmCorners.Service.Configurations;
@@ -48,4 +50,15 @@ public static class Testing
             })));
         TestScheduler.Start();
     }
+
+    public static void VerifyCommandIsCalledOnce<TCommand>(this Mock<ISender> senderMock)
+        where TCommand : IBaseRequest =>
+        senderMock.Verify(s =>
+                s.Send(It.Is<TCommand>(br => br.GetType() == typeof(TCommand)),
+                    It.IsAny<CancellationToken>()),
+            Times.Once);
+
+    public static void VerifyCommandIsNotCalled<TCommand>(this Mock<ISender> senderMock)
+        where TCommand : IBaseRequest =>
+        senderMock.Verify(s => s.Send(It.IsAny<TCommand>(), It.IsAny<CancellationToken>()), Times.Never);
 }

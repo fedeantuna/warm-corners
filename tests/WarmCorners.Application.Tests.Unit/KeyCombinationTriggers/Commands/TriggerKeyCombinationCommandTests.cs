@@ -27,7 +27,7 @@ public class TriggerKeyCombinationCommandTests
     }
 
     [Fact]
-    public async Task ProcessKeyCombinationTriggerCommandHandler_LogsWhenAKeyCombinationHasBeenExecutedCorrectly()
+    public async Task TriggerKeyCombinationCommandHandler_LogsWhenAKeyCombinationHasBeenExecutedCorrectly()
     {
         // Arrange
         var keyCodes = new List<KeyCode>
@@ -35,13 +35,13 @@ public class TriggerKeyCombinationCommandTests
             KeyCode.VcLeftMeta,
             KeyCode.VcTab
         };
-        var processKeyCombinationTriggerCommand = new TriggerKeyCombinationCommand
+        var triggerKeyCombinationCommand = new TriggerKeyCombinationCommand
         {
             KeyCombination = keyCodes
         };
 
         // Act
-        await this._sender.Send(processKeyCombinationTriggerCommand);
+        await this._sender.Send(triggerKeyCombinationCommand);
 
         // Assert
         InMemorySink.Instance
@@ -52,7 +52,7 @@ public class TriggerKeyCombinationCommandTests
     }
 
     [Fact]
-    public async Task ProcessKeyCombinationTriggerCommandHandler_ExecutesKeyCombinationWhenMouseCursorIsInCorrectCorner()
+    public async Task TriggerKeyCombinationCommandHandler_ExecutesKeyCombinationWhenMouseCursorIsInCorrectCorner()
     {
         // Arrange
         var keyCodes = new List<KeyCode>
@@ -60,13 +60,13 @@ public class TriggerKeyCombinationCommandTests
             KeyCode.VcLeftMeta,
             KeyCode.VcTab
         };
-        var processKeyCombinationTriggerCommand = new TriggerKeyCombinationCommand
+        var triggerKeyCombinationCommand = new TriggerKeyCombinationCommand
         {
             KeyCombination = keyCodes
         };
 
         // Act
-        await this._sender.Send(processKeyCombinationTriggerCommand);
+        await this._sender.Send(triggerKeyCombinationCommand);
 
         // Assert
         this.VerifyKeyCombinationIsExecuted(keyCodes);
@@ -85,13 +85,7 @@ public class TriggerKeyCombinationCommandTests
         await this._sender.Send(triggerKeyCombinationCommand);
 
         // Assert
-        InMemorySink.Instance
-            .Should()
-            .HaveMessage(TriggerKeyCombinationCommandValidationExceptionHandler.RequestValidationExceptionLogMessageTemplate).Once()
-            .WithLevel(LogEventLevel.Error)
-            .WithProperty("RequestName").WithValue(nameof(TriggerKeyCombinationCommand))
-            .And.WithProperty("Request").HavingADestructuredObject().WithProperty("KeyCombination").WithValue("[]")
-            .And.WithProperty("Errors");
+        VerifyTriggerKeyCombinationCommandValidationExceptionHandlerLog("[]");
     }
 
     [Fact]
@@ -107,13 +101,7 @@ public class TriggerKeyCombinationCommandTests
         await this._sender.Send(triggerKeyCombinationCommand);
 
         // Assert
-        InMemorySink.Instance
-            .Should()
-            .HaveMessage(TriggerKeyCombinationCommandValidationExceptionHandler.RequestValidationExceptionLogMessageTemplate).Once()
-            .WithLevel(LogEventLevel.Error)
-            .WithProperty("RequestName").WithValue(nameof(TriggerKeyCombinationCommand))
-            .And.WithProperty("Request").HavingADestructuredObject().WithProperty("KeyCombination").WithValue(null)
-            .And.WithProperty("Errors");
+        VerifyTriggerKeyCombinationCommandValidationExceptionHandlerLog(null!);
     }
 
     private void VerifyKeyCombinationIsExecuted(IReadOnlyCollection<KeyCode> keyCodes)
@@ -125,4 +113,13 @@ public class TriggerKeyCombinationCommandTests
             esw.SimulateKeyRelease(It.Is<KeyCode>(kc =>
                 keyCodes.Contains(kc))), Times.Exactly(keyCodes.Count));
     }
+
+    private static void VerifyTriggerKeyCombinationCommandValidationExceptionHandlerLog(object expectedKeyCombination) =>
+        InMemorySink.Instance
+            .Should()
+            .HaveMessage(TriggerKeyCombinationCommandValidationExceptionHandler.RequestValidationExceptionLogMessageTemplate).Once()
+            .WithLevel(LogEventLevel.Error)
+            .WithProperty("RequestName").WithValue(nameof(TriggerKeyCombinationCommand))
+            .And.WithProperty("Request").HavingADestructuredObject().WithProperty("KeyCombination").WithValue(expectedKeyCombination)
+            .And.WithProperty("Errors");
 }

@@ -1,10 +1,7 @@
 using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Moq;
-using Serilog;
-using Serilog.Sinks.InMemory;
 using SharpHook;
 using WarmCorners.Application.Common.Services;
 using WarmCorners.Application.Common.Wrappers;

@@ -1,8 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Serilog;
-using Serilog.Sinks.InMemory;
 using SharpHook;
 using WarmCorners.Application;
 using WarmCorners.Application.Common.Wrappers;
@@ -20,7 +16,7 @@ public class ServiceProviderBuilder
     {
         this._services.AddApplicationServices()
             .AddInfrastructureServices()
-            .SetupInMemoryLogger();;
+            .SetupInMemoryLogger();
 
         this.ReplaceServicesWithMocks();
         this.ReplaceWrappersWithMocks();
