@@ -7,7 +7,7 @@ using WarmCorners.Application.KeyCombinationTriggers.Commands.TriggerKeyCombinat
 
 namespace WarmCorners.Tests.Integration.KeyCombinationTriggers.Commands;
 
-public class ProcessKeyCombinationTriggerCommandTests
+public class TriggerKeyCombinationCommandTests
 {
     private Mock<IEventSimulator> _eventSimulatorMock = null!;
     private ISender _sender = null!;

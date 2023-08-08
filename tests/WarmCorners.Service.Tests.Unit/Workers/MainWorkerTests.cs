@@ -37,9 +37,7 @@ public class MainWorkerTests
     {
         // Arrange
         var cancellationTokenSource = new CancellationTokenSource();
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(It.IsAny<ScreenCorner>(), It.IsAny<short>(), It.IsAny<short>()))
-            .Returns(false);
+        this.SetupScreenServiceMockMouseCursorIsInCorner(false);
 
         await this._mainWorker.StartAsync(cancellationTokenSource.Token);
 
@@ -47,9 +45,7 @@ public class MainWorkerTests
         Testing.TriggerMouseEvent();
 
         // Assert
-        this._senderMock
-            .Verify(s =>
-                s.Send(It.IsAny<TriggerKeyCombinationCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+        this._senderMock.VerifyCommandIsNotCalled<TriggerKeyCombinationCommand>();
 
         cancellationTokenSource.Cancel();
     }
@@ -59,9 +55,7 @@ public class MainWorkerTests
     {
         // Arrange
         var cancellationTokenSource = new CancellationTokenSource();
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(It.IsAny<ScreenCorner>(), It.IsAny<short>(), It.IsAny<short>()))
-            .Returns(true);
+        this.SetupScreenServiceMockMouseCursorIsInCorner(true);
 
         await this._mainWorker.StartAsync(cancellationTokenSource.Token);
 
@@ -69,12 +63,7 @@ public class MainWorkerTests
         Testing.TriggerMouseEvent();
 
         // Assert
-        this._senderMock
-            .Verify(s =>
-                    s.Send(It.Is<IBaseRequest>(br =>
-                            br.GetType() == typeof(TriggerKeyCombinationCommand)),
-                        It.IsAny<CancellationToken>()),
-                Times.Once);
+        this._senderMock.VerifyCommandIsCalledOnce<TriggerKeyCombinationCommand>();
 
         cancellationTokenSource.Cancel();
     }
@@ -84,9 +73,7 @@ public class MainWorkerTests
     {
         // Arrange
         var cancellationTokenSource = new CancellationTokenSource();
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(It.IsAny<ScreenCorner>(), It.IsAny<short>(), It.IsAny<short>()))
-            .Returns(false);
+        this.SetupScreenServiceMockMouseCursorIsInCorner(false);
 
         await this._mainWorker.StartAsync(cancellationTokenSource.Token);
 
@@ -94,9 +81,7 @@ public class MainWorkerTests
         Testing.TriggerMouseEvent();
 
         // Assert
-        this._senderMock
-            .Verify(s =>
-                s.Send(It.IsAny<TriggerShellCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+        this._senderMock.VerifyCommandIsNotCalled<TriggerShellCommand>();
 
         cancellationTokenSource.Cancel();
     }
@@ -106,9 +91,7 @@ public class MainWorkerTests
     {
         // Arrange
         var cancellationTokenSource = new CancellationTokenSource();
-        this._screenServiceMock
-            .Setup(ss => ss.IsMouseCursorInCorner(It.IsAny<ScreenCorner>(), It.IsAny<short>(), It.IsAny<short>()))
-            .Returns(true);
+        this.SetupScreenServiceMockMouseCursorIsInCorner(true);
 
         await this._mainWorker.StartAsync(cancellationTokenSource.Token);
 
@@ -116,12 +99,7 @@ public class MainWorkerTests
         Testing.TriggerMouseEvent();
 
         // Assert
-        this._senderMock
-            .Verify(s =>
-                    s.Send(It.Is<IBaseRequest>(br =>
-                            br.GetType() == typeof(TriggerShellCommand)),
-                        It.IsAny<CancellationToken>()),
-                Times.Once);
+        this._senderMock.VerifyCommandIsCalledOnce<TriggerShellCommand>();
 
         cancellationTokenSource.Cancel();
     }
@@ -136,4 +114,9 @@ public class MainWorkerTests
         this._reactiveGlobalHookMock.Verify(rgh =>
             rgh.Dispose(), Times.Once);
     }
+
+    private void SetupScreenServiceMockMouseCursorIsInCorner(bool mouseIsInCursor) =>
+        this._screenServiceMock
+            .Setup(ss => ss.IsMouseCursorInCorner(It.IsAny<ScreenCorner>(), It.IsAny<short>(), It.IsAny<short>()))
+            .Returns(mouseIsInCursor);
 }

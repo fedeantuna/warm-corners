@@ -1,8 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Serilog;
-using Serilog.Sinks.InMemory;
 using WarmCorners.Application.Common.Wrappers;
 using WarmCorners.Infrastructure.Wrappers;
 using WarmCorners.Tests.Common;
