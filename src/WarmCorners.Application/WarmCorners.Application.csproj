@@ -19,7 +19,7 @@
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
       <PackageReference Include="MediatR" Version="12.1.1" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
-      <PackageReference Include="SharpHook.Reactive" Version="4.2.1" />
+      <PackageReference Include="SharpHook.Reactive" Version="5.1.1" />
       <PackageReference Include="System.Reactive" Version="6.0.0" />
     </ItemGroup>
 
