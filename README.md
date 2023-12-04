@@ -3,6 +3,10 @@
 [![Codacy Code Coverage](https://img.shields.io/codacy/coverage/cbd8b1b81d7a4dfaabb4cff12ea7ab1b?style=flat-square)](https://www.codacy.com/gh/fedeantuna/warm-corners/dashboard?utm_source=github.com\&utm_medium=referral\&utm_content=fedeantuna/warm-corners\&utm_campaign=Badge_Coverage)
 [![GitHub](https://img.shields.io/github/license/fedeantuna/warm-corners?style=flat-square)](https://github.com/fedeantuna/warm-corners/blob/main/LICENSE)
 
+# ARCHIVED!
+
+This repository is no longer maintained.
+
 # WarmCorners
 
 WarmCorners is a solution compatible with Windows that provides a feature similar to `Hot Corners` on GNOME. Basically you can setup triggers for when you move the mouse over the corners of main screen.
